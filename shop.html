@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title id="doc-title">Dr. Dev Shop</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07070f;--s1:#101020;--s2:#18182e;--s3:#22224a;--p:#7c3aed;--pl:#a855f7;--ac:#22d3ee;--ok:#10b981;--warn:#f59e0b;--err:#ef4444;--tx:#e2e8f0;--tm:#94a3b8;--bd:rgba(124,58,237,.18);--r:14px;--sh:0 8px 32px rgba(0,0,0,.6);--glow:0 0 24px rgba(124,58,237,.35)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--s1)}::-webkit-scrollbar-thumb{background:var(--p);border-radius:3px}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(rgba(124,58,237,.035) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+#root{position:relative;z-index:1}
+/* NAVBAR */
+.nav-bar{background:rgba(7,7,15,.94);backdrop-filter:blur(24px);border-bottom:1px solid var(--bd);padding:10px 0;position:sticky;top:0;z-index:900}
+.brand{font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.3rem;letter-spacing:1px;background:linear-gradient(135deg,var(--pl),var(--ac));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;text-decoration:none;white-space:nowrap}
+.search-bar{background:var(--s2);border:1px solid var(--bd);border-radius:25px;padding:9px 18px;color:var(--tx);width:230px;outline:none;font-family:'Syne',sans-serif;transition:.3s}
+.search-bar:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(124,58,237,.2)}
+.search-bar::placeholder{color:var(--tm)}
+.nav-btn{background:var(--s2);border:1px solid var(--bd);border-radius:22px;padding:8px 14px;color:var(--tx);cursor:pointer;transition:.3s;display:inline-flex;align-items:center;gap:6px;font-size:.86rem;font-family:'Syne',sans-serif;font-weight:600;white-space:nowrap;text-decoration:none}
+.nav-btn:hover{border-color:var(--p);color:var(--pl)}
+.badge-num{background:var(--p);color:#fff;border-radius:10px;padding:1px 7px;font-size:.72rem;font-weight:700}
+.wal-num{color:var(--ok);font-family:'JetBrains Mono',monospace;font-weight:700}
+/* BUTTONS */
+.btn-pr{background:linear-gradient(135deg,var(--p),var(--pl));border:none;border-radius:25px;padding:11px 26px;color:#fff;font-weight:700;cursor:pointer;transition:.3s;box-shadow:0 4px 18px rgba(124,58,237,.4);font-family:'Syne',sans-serif;font-size:.9rem}
+.btn-pr:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,.6)}
+.btn-pr:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-out{background:transparent;border:1px solid var(--p);border-radius:25px;padding:10px 24px;color:var(--pl);font-weight:700;cursor:pointer;transition:.3s;font-family:'Syne',sans-serif;font-size:.9rem}
+.btn-out:hover{background:var(--p);color:#fff}
+.btn-ac{background:linear-gradient(135deg,#0891b2,var(--ac));border:none;border-radius:25px;padding:11px 26px;color:#fff;font-weight:700;cursor:pointer;transition:.3s;font-family:'Syne',sans-serif}
+.btn-ok{background:linear-gradient(135deg,#059669,var(--ok));border:none;border-radius:25px;padding:11px 26px;color:#fff;font-weight:700;cursor:pointer;transition:.3s;font-family:'Syne',sans-serif}
+.btn-sm{padding:7px 16px!important;font-size:.8rem!important}
+.btn-icon{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:7px 12px;color:var(--tm);cursor:pointer;transition:.3s}
+.btn-icon:hover{border-color:var(--err);color:var(--err)}
+/* CARDS */
+.card-d{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:20px;transition:.3s}
+.card-d:hover{border-color:rgba(124,58,237,.4)}
+/* PRODUCT CARD */
+.prod-card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:.35s;position:relative;height:100%;display:flex;flex-direction:column}
+.prod-card:hover{border-color:var(--p);transform:translateY(-5px);box-shadow:var(--glow)}
+.prod-img{width:100%;height:185px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:3.5rem;overflow:hidden;position:relative;flex-shrink:0}
+.prod-img img{width:100%;height:100%;object-fit:cover}
+.prod-disc{position:absolute;top:10px;right:10px;background:var(--err);color:#fff;border-radius:8px;padding:3px 9px;font-size:.7rem;font-weight:700}
+.prod-body{padding:14px;flex:1;display:flex;flex-direction:column}
+.prod-name{font-weight:700;font-size:.91rem;margin-bottom:6px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.prod-price{font-family:'JetBrains Mono',monospace;color:var(--pl);font-weight:700;font-size:1.05rem}
+.prod-orig{text-decoration:line-through;color:var(--tm);font-size:.8rem;margin-left:6px}
+/* CATEGORY CARD */
+.cat-card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:26px 14px;text-align:center;cursor:pointer;transition:.35s;overflow:hidden}
+.cat-card:hover{transform:translateY(-5px);border-color:var(--p);box-shadow:var(--glow)}
+.cat-icon{font-size:2.6rem;margin-bottom:10px;display:block}
+.cat-name{font-weight:700;font-size:.92rem}
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--s1) 0%,rgba(124,58,237,.12) 100%);border:1px solid var(--bd);border-radius:20px;padding:52px 44px;margin:16px 0 28px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-40%;right:-8%;width:380px;height:380px;background:radial-gradient(circle,rgba(124,58,237,.18),transparent 65%);border-radius:50%}
+.hero::after{content:'';position:absolute;bottom:-30%;left:-5%;width:250px;height:250px;background:radial-gradient(circle,rgba(34,211,238,.1),transparent 65%);border-radius:50%}
+.hero h1{font-family:'Orbitron',sans-serif;font-size:2.3rem;font-weight:900;line-height:1.2;position:relative;z-index:1}
+.hero h1 .grd{background:linear-gradient(135deg,var(--pl),var(--ac));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--tm);font-size:1rem;margin-top:12px;position:relative;z-index:1}
+/* SECTION */
+.sec-head{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.sec-title{font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:700;white-space:nowrap}
+.sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--bd),transparent)}
+.sec-lnk{font-size:.83rem;color:var(--pl);cursor:pointer;white-space:nowrap}
+.sec-lnk:hover{text-decoration:underline}
+/* FORM */
+.f-group{margin-bottom:16px}
+.f-label{font-size:.82rem;color:var(--tm);font-weight:600;margin-bottom:7px;display:block}
+.f-ctrl{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:11px 16px;color:var(--tx);width:100%;outline:none;transition:.3s;font-family:'Syne',sans-serif;font-size:.9rem}
+.f-ctrl:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(124,58,237,.18)}
+.f-ctrl::placeholder{color:var(--tm)}
+select.f-ctrl option{background:var(--s1)}
+textarea.f-ctrl{resize:vertical}
+/* TABS */
+.tabs{display:flex;gap:4px;background:var(--s2);border-radius:12px;padding:4px;margin-bottom:22px}
+.tab{flex:1;padding:10px;border:none;border-radius:9px;background:transparent;color:var(--tm);font-weight:700;cursor:pointer;transition:.3s;font-family:'Syne',sans-serif;font-size:.86rem}
+.tab.on{background:var(--p);color:#fff}
+/* TOASTS */
+#toasts{position:fixed;top:75px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:10px;max-width:300px;pointer-events:none}
+.toast-c{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh);animation:slideIn .3s ease;font-size:.86rem;pointer-events:auto;transition:opacity .3s,transform .3s}
+.toast-c.ok{border-color:var(--ok)}.toast-c.err{border-color:var(--err)}.toast-c.info{border-color:var(--ac)}.toast-c.warn{border-color:var(--warn)}
+@keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:var(--s1);border:1px solid var(--bd);border-radius:20px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.8);animation:popIn .3s ease}
+.modal-box.wide{max-width:640px}
+@keyframes popIn{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-close{position:absolute;top:14px;right:14px;background:var(--s2);border:1px solid var(--bd);border-radius:50%;width:32px;height:32px;color:var(--tm);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.3s;font-size:.88rem}
+.modal-close:hover{color:var(--err);border-color:var(--err)}
+.modal-title{font-family:'Orbitron',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:20px}
+/* STATUS */
+.badge-s{padding:4px 11px;border-radius:14px;font-size:.74rem;font-weight:700;display:inline-block}
+.s-paid{background:rgba(16,185,129,.18);color:var(--ok)}.s-pending{background:rgba(245,158,11,.18);color:var(--warn)}
+.s-failed{background:rgba(239,68,68,.18);color:var(--err)}.s-verifying{background:rgba(34,211,238,.18);color:var(--ac)}
+.s-processing{background:rgba(168,85,247,.18);color:var(--pl)}.s-credited{background:rgba(16,185,129,.18);color:var(--ok)}
+.s-approved{background:rgba(16,185,129,.18);color:var(--ok)}
+/* WALLET */
+.wallet-big{background:linear-gradient(135deg,var(--p),var(--ac));border-radius:20px;padding:26px;position:relative;overflow:hidden;color:#fff}
+.wallet-big::before{content:'₹';position:absolute;right:14px;top:4px;font-size:6rem;font-family:'Orbitron',sans-serif;opacity:.1;font-weight:900;line-height:1}
+.wal-amt{font-family:'Orbitron',sans-serif;font-size:2.3rem;font-weight:900}
+/* PAGINATION */
+.pag{display:flex;gap:7px;justify-content:center;margin-top:28px;flex-wrap:wrap}
+.pag-btn{background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:8px 14px;color:var(--tm);cursor:pointer;transition:.3s;font-size:.84rem}
+.pag-btn:hover,.pag-btn.on{background:var(--p);border-color:var(--p);color:#fff}
+/* BREADCRUMB */
+.bc{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--tm);margin-bottom:18px;flex-wrap:wrap}
+.bc a{color:var(--pl);cursor:pointer}.bc a:hover{text-decoration:underline}
+/* STARS */
+.star-i{font-size:1.6rem;color:var(--s3);cursor:pointer;transition:.2s;display:inline-block}
+.star-i.on,.star-i:hover{color:var(--warn)}
+/* REFER BOX */
+.ref-box{background:var(--s2);border:1px dashed var(--p);border-radius:12px;padding:15px;font-family:'JetBrains Mono',monospace;font-size:.8rem;word-break:break-all;display:flex;align-items:center;gap:10px}
+/* BOTTOM NAV */
+.bot-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(7,7,15,.97);border-top:1px solid var(--bd);backdrop-filter:blur(24px);z-index:800}
+.bot-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 0;color:var(--tm);cursor:pointer;font-size:.64rem;gap:3px;transition:.3s;border:none;background:transparent;font-family:'Syne',sans-serif}
+.bot-item i{font-size:1.12rem}.bot-item.on,.bot-item:hover{color:var(--pl)}
+/* ANNOUNCE */
+.ann-bar{background:linear-gradient(90deg,var(--p),var(--ac));color:#fff;text-align:center;padding:8px 16px;font-size:.82rem;font-weight:600}
+/* LOADER */
+.loader{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:18px}
+.ring{width:54px;height:54px;border:3px solid var(--s2);border-top-color:var(--p);border-right-color:var(--ac);border-radius:50%;animation:spin 1s linear infinite}
+.ring.sm{width:28px;height:28px;border-width:2px}
+.loader-lbl{font-family:'Orbitron',sans-serif;font-size:.9rem;background:linear-gradient(135deg,var(--pl),var(--ac));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* PAGE */
+.page{display:none;padding:20px 0;animation:fadeUp .3s ease}
+.page.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* MISC */
+.divider{height:1px;background:var(--bd);margin:18px 0}
+.chip{background:var(--s2);border:1px solid var(--bd);border-radius:20px;padding:5px 13px;font-size:.78rem;color:var(--tm);cursor:pointer;transition:.3s;display:inline-flex;align-items:center;gap:6px}
+.chip:hover,.chip.on{background:var(--p);border-color:var(--p);color:#fff}
+.empty-state{text-align:center;padding:60px 20px;color:var(--tm)}
+.empty-state i{font-size:3rem;margin-bottom:14px;display:block;opacity:.4}
+.tbl{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.tbl table{width:100%;border-collapse:collapse}
+.tbl th{background:var(--s2);color:var(--tm);font-size:.78rem;padding:12px 14px;text-align:left;font-weight:700;border-bottom:1px solid var(--bd)}
+.tbl td{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.85rem;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(124,58,237,.05)}
+.txt-grd{background:linear-gradient(135deg,var(--pl),var(--ac));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.d-none{display:none!important}
+@media(max-width:768px){.bot-nav{display:flex}body{padding-bottom:68px}.hero{padding:28px 18px}.hero h1{font-size:1.5rem}.search-bar{width:160px}}
+@media(max-width:480px){.search-bar{display:none}}
+</style>
+</head>
+<body>
+<div id="root">
+<!-- LOADER -->
+<div class="loader" id="loader"><div class="ring"></div><div class="loader-lbl">DR. DEV SHOP</div></div>
+<!-- ANNOUNCE -->
+<div class="ann-bar d-none" id="ann-bar"></div>
+<!-- NAVBAR -->
+<nav class="nav-bar">
+  <div class="container-xl">
+    <div class="d-flex align-items-center gap-3">
+      <span class="brand" onclick="navigate('home')">⚡ DR.DEV SHOP</span>
+      <input class="search-bar" type="text" id="search-input" placeholder="🔍 Search products..." oninput="debounceSearch(this.value)">
+      <div class="ms-auto d-flex align-items-center gap-2 flex-wrap">
+        <button class="nav-btn" onclick="navigate('wallet')" id="wallet-nav-btn" style="display:none"><i class="fas fa-wallet"></i><span class="wal-num" id="nav-wallet">₹0</span></button>
+        <button class="nav-btn" onclick="navigate('cart')"><i class="fas fa-shopping-cart"></i> Cart <span class="badge-num" id="cart-count">0</span></button>
+        <button class="nav-btn" onclick="showAuth()" id="login-btn"><i class="fas fa-user"></i> Login</button>
+        <div class="dropdown" id="user-menu" style="display:none">
+          <button class="nav-btn dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-user-circle"></i> <span id="nav-uname">Me</span></button>
+          <ul class="dropdown-menu dropdown-menu-end" style="background:var(--s2);border:1px solid var(--bd);border-radius:12px;min-width:180px">
+            <li><a class="dropdown-item" style="color:var(--tx);cursor:pointer;padding:10px 16px" onclick="navigate('profile')"><i class="fas fa-user me-2" style="color:var(--pl)"></i>Profile</a></li>
+            <li><a class="dropdown-item" style="color:var(--tx);cursor:pointer;padding:10px 16px" onclick="navigate('orders')"><i class="fas fa-box me-2" style="color:var(--warn)"></i>My Orders</a></li>
+            <li><a class="dropdown-item" style="color:var(--tx);cursor:pointer;padding:10px 16px" onclick="navigate('refer')"><i class="fas fa-gift me-2" style="color:var(--ok)"></i>Refer &amp; Earn</a></li>
+            <li><a class="dropdown-item" style="color:var(--tx);cursor:pointer;padding:10px 16px" onclick="navigate('wallet')"><i class="fas fa-wallet me-2" style="color:var(--ac)"></i>Wallet</a></li>
+            <li><hr style="border-color:var(--bd);margin:4px 0"></li>
+            <li><a class="dropdown-item" style="color:var(--err);cursor:pointer;padding:10px 16px" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- TOASTS -->
+<div id="toasts"></div>
+<!-- MAIN -->
+<div class="container-xl" id="main">
+  <!-- HOME -->
+  <div class="page on" id="page-home">
+    <div class="hero">
+      <h1 id="hero-h1">🛒 Welcome to <span class="grd">Dr. Dev Shop</span></h1>
+      <p id="hero-tag">Your One-Stop Digital Store — Fast · Secure · Trusted</p>
+      <div class="mt-4 d-flex gap-3 flex-wrap" style="position:relative;z-index:1">
+        <button class="btn-pr" onclick="document.getElementById('cats-sec').scrollIntoView({behavior:'smooth'})">🔥 Shop Now</button>
+        <button class="btn-out" onclick="navigate('refer')">💰 Earn Rewards</button>
+      </div>
+    </div>
+    <div id="cats-sec">
+      <div class="sec-head"><span class="sec-title">📦 Categories</span><div class="sec-line"></div><span class="sec-lnk" onclick="navigate('products')">View All</span></div>
+      <div class="row g-3 mb-4" id="home-cats"></div>
+    </div>
+    <div class="sec-head"><span class="sec-title">⚡ Featured Products</span><div class="sec-line"></div><span class="sec-lnk" onclick="navigate('products')">View All</span></div>
+    <div class="row g-3" id="home-prods"></div>
+  </div>
+  <!-- PRODUCTS -->
+  <div class="page" id="page-products">
+    <div class="bc" id="prod-bc"></div>
+    <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+      <h2 class="sec-title mb-0" id="prods-title">All Products</h2>
+      <div class="d-flex gap-2 flex-wrap" id="cat-chips"></div>
+    </div>
+    <div class="row g-3" id="prods-grid"></div>
+    <div class="pag" id="prods-pag"></div>
+  </div>
+  <!-- PRODUCT DETAIL -->
+  <div class="page" id="page-product">
+    <div class="bc" id="pdtl-bc"></div>
+    <div id="pdtl-content"></div>
+  </div>
+  <!-- CART -->
+  <div class="page" id="page-cart">
+    <div class="sec-head"><span class="sec-title">🛒 My Cart</span><div class="sec-line"></div></div>
+    <div id="cart-content"></div>
+  </div>
+  <!-- ORDERS -->
+  <div class="page" id="page-orders">
+    <div class="sec-head"><span class="sec-title">📦 My Orders</span><div class="sec-line"></div></div>
+    <div id="orders-content"></div>
+  </div>
+  <!-- WALLET -->
+  <div class="page" id="page-wallet">
+    <div class="sec-head"><span class="sec-title">💳 My Wallet</span><div class="sec-line"></div></div>
+    <div id="wallet-content"></div>
+  </div>
+  <!-- REFER -->
+  <div class="page" id="page-refer">
+    <div class="sec-head"><span class="sec-title">🎁 Refer &amp; Earn</span><div class="sec-line"></div></div>
+    <div id="refer-content"></div>
+  </div>
+  <!-- PROFILE -->
+  <div class="page" id="page-profile">
+    <div class="sec-head"><span class="sec-title">👤 My Profile</span><div class="sec-line"></div></div>
+    <div id="profile-content"></div>
+  </div>
+  <!-- RULES -->
+  <div class="page" id="page-rules">
+    <div class="sec-head"><span class="sec-title">📜 Rules &amp; Policy</span><div class="sec-line"></div></div>
+    <div id="rules-content"></div>
+  </div>
+</div>
+<!-- BOTTOM NAV -->
+<div class="bot-nav">
+  <button class="bot-item on" onclick="navigate('home')" data-page="home"><i class="fas fa-home"></i>Home</button>
+  <button class="bot-item" onclick="navigate('cart')" data-page="cart"><i class="fas fa-shopping-cart"></i>Cart</button>
+  <button class="bot-item" onclick="navigate('orders')" data-page="orders"><i class="fas fa-box"></i>Orders</button>
+  <button class="bot-item" onclick="navigate('wallet')" data-page="wallet"><i class="fas fa-wallet"></i>Wallet</button>
+  <button class="bot-item" onclick="navigate('refer')" data-page="refer"><i class="fas fa-gift"></i>Refer</button>
+</div>
+<!-- FOOTER -->
+<footer style="background:var(--s1);border-top:1px solid var(--bd);padding:18px 0;margin-top:50px;text-align:center">
+  <div class="container-xl">
+    <p style="color:var(--tm);font-size:.82rem" id="footer-copy">© Dr. Hamza 2026 | Dr. Dev | All Rights Reserved</p>
+    <div class="mt-2 d-flex gap-4 justify-content-center flex-wrap">
+      <span class="sec-lnk" onclick="navigate('rules')">📜 Rules</span>
+      <span class="sec-lnk" onclick="navigate('refer')">🎁 Refer &amp; Earn</span>
+      <span class="sec-lnk d-none" id="wa-link">💬 WhatsApp Support</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ── MODALS ─────────────────────────────────────────────────── -->
+<!-- AUTH -->
+<div class="overlay d-none" id="auth-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('auth-modal')"><i class="fas fa-times"></i></button>
+    <div class="tabs">
+      <button class="tab on" onclick="authTab('login')">🔑 Login</button>
+      <button class="tab" onclick="authTab('register')">📝 Register</button>
+    </div>
+    <div id="auth-login">
+      <div class="f-group"><label class="f-label">📱 Mobile Number or Email</label><input class="f-ctrl" id="l-id" placeholder="Email or 10-digit mobile" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="f-group"><label class="f-label">🔒 Password</label><input class="f-ctrl" id="l-pw" type="password" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn-pr w-100 mt-2" onclick="doLogin()" id="login-submit-btn">Login →</button>
+    </div>
+    <div id="auth-reg" class="d-none">
+      <div class="f-group"><label class="f-label">👤 Full Name <small style="color:var(--tm)">(letters only)</small></label><input class="f-ctrl" id="r-name" placeholder="John Doe"></div>
+      <div class="f-group"><label class="f-label">📱 Mobile Number</label>
+        <div class="d-flex gap-2"><span class="f-ctrl" style="width:68px;flex-shrink:0;color:var(--tm);cursor:default;text-align:center">+91</span><input class="f-ctrl" id="r-mob" type="tel" placeholder="10-digit number" maxlength="10"></div>
+      </div>
+      <div class="f-group"><label class="f-label">📧 Email ID</label><input class="f-ctrl" id="r-email" type="email" placeholder="you@example.com"></div>
+      <div class="f-group"><label class="f-label">🔒 Password <small style="color:var(--tm)">(min 6 chars)</small></label><input class="f-ctrl" id="r-pw" type="password" placeholder="Min 6 characters"></div>
+      <div class="f-group"><label class="f-label">🎁 Refer Code <small style="color:var(--tm)">(optional)</small></label><input class="f-ctrl" id="r-ref" placeholder="ABCD1234" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
+      <button class="btn-pr w-100 mt-2" onclick="doRegister()" id="reg-submit-btn">Create Account →</button>
+    </div>
+  </div>
+</div>
+<!-- CHECKOUT -->
+<div class="overlay d-none" id="checkout-modal">
+  <div class="modal-box wide">
+    <button class="modal-close" onclick="closeModal('checkout-modal')"><i class="fas fa-times"></i></button>
+    <div class="modal-title">💳 Checkout</div>
+    <div id="checkout-content"></div>
+  </div>
+</div>
+<!-- UTR -->
+<div class="overlay d-none" id="utr-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('utr-modal')"><i class="fas fa-times"></i></button>
+    <div class="modal-title">🏦 Submit Payment UTR</div>
+    <div id="utr-content"></div>
+  </div>
+</div>
+<!-- DEPOSIT -->
+<div class="overlay d-none" id="dep-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('dep-modal')"><i class="fas fa-times"></i></button>
+    <div class="modal-title">💰 Add Money to Wallet</div>
+    <div id="dep-content"></div>
+  </div>
+</div>
+<!-- WITHDRAW -->
+<div class="overlay d-none" id="wd-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('wd-modal')"><i class="fas fa-times"></i></button>
+    <div class="modal-title">🏧 Withdraw Money</div>
+    <div id="wd-content"></div>
+  </div>
+</div>
+<!-- REVIEW -->
+<div class="overlay d-none" id="rev-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('rev-modal')"><i class="fas fa-times"></i></button>
+    <div class="modal-title">⭐ Write a Review</div>
+    <div id="rev-content"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ─── State ────────────────────────────────────────────────────────────────────
+const S={token:localStorage.getItem('drdev_token'),user:null,settings:{},categories:[],
+  currentPage:'home',currentCatId:null,currentProdId:null,prodPage:1,prodPages:1,
+  cartCount:0,pendingOrder:null,searchTimer:null};
+
+// ─── API ──────────────────────────────────────────────────────────────────────
+async function api(path,method='GET',body=null){
+  const opts={method,headers:{'Content-Type':'application/json','X-Screen':`${screen.width}x${screen.height}`,
+    ...(S.token?{Authorization:`Bearer ${S.token}`}:{})}};
+  if(body) opts.body=JSON.stringify(body);
+  const r=await fetch('/api/'+path,opts);
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.error||'Something went wrong');
+  return d;
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+function toast(msg,type='info'){
+  const icons={ok:'check-circle',err:'exclamation-circle',info:'info-circle',warn:'exclamation-triangle'};
+  const colors={ok:'var(--ok)',err:'var(--err)',info:'var(--ac)',warn:'var(--warn)'};
+  const d=document.createElement('div');
+  d.className=`toast-c ${type}`;
+  d.innerHTML=`<i class="fas fa-${icons[type]||'info-circle'}" style="color:${colors[type]||colors.info};flex-shrink:0"></i><span>${msg}</span>`;
+  document.getElementById('toasts').appendChild(d);
+  setTimeout(()=>{d.style.opacity='0';d.style.transform='translateX(120%)';setTimeout(()=>d.remove(),300);},3800);
+}
+
+// ─── Modal ────────────────────────────────────────────────────────────────────
+function openModal(id){document.getElementById(id).classList.remove('d-none');document.body.style.overflow='hidden';}
+function closeModal(id){document.getElementById(id).classList.add('d-none');document.body.style.overflow='';}
+document.addEventListener('click',e=>{if(e.target.classList.contains('overlay'))closeModal(e.target.id);});
+
+// ─── Navigate ─────────────────────────────────────────────────────────────────
+function navigate(page,extra={}){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.bot-item').forEach(b=>b.classList.remove('on'));
+  S.currentPage=page;
+  const el=document.getElementById(`page-${page}`);
+  if(el) el.classList.add('on');
+  document.querySelector(`.bot-item[data-page="${page}"]`)?.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(page==='home')loadHome();
+  if(page==='products'){S.currentCatId=extra.catId||null;S.prodPage=extra.page||1;loadProducts(extra.search||'');}
+  if(page==='product'){S.currentProdId=extra.id;loadProductDetail(extra.id);}
+  if(page==='cart')loadCart();
+  if(page==='orders')requireAuth()&&loadOrders();
+  if(page==='wallet')requireAuth()&&loadWallet();
+  if(page==='refer')requireAuth()&&loadRefer();
+  if(page==='profile')requireAuth()&&loadProfile();
+  if(page==='rules')loadRules();
+}
+
+function requireAuth(){if(!S.user){toast('Please login first 🔑','warn');showAuth();return false;}return true;}
+
+// ─── Auth ─────────────────────────────────────────────────────────────────────
+function showAuth(){openModal('auth-modal');}
+
+function authTab(t){
+  document.querySelectorAll('#auth-modal .tab').forEach((b,i)=>b.classList.toggle('on',(t==='login'&&i===0)||(t==='register'&&i===1)));
+  document.getElementById('auth-login').classList.toggle('d-none',t==='register');
+  document.getElementById('auth-reg').classList.toggle('d-none',t==='login');
+}
+
+async function doLogin(){
+  const btn=document.getElementById('login-submit-btn');
+  const identifier=document.getElementById('l-id').value.trim();
+  const password=document.getElementById('l-pw').value;
+  if(!identifier||!password){toast('Fill all fields','warn');return;}
+  btn.disabled=true;btn.textContent='Logging in...';
+  try{
+    const d=await api('auth/login','POST',{identifier,password});
+    S.token=d.token;S.user=d.user;
+    localStorage.setItem('drdev_token',d.token);
+    closeModal('auth-modal');updateAuthUI();
+    toast(`Welcome back, ${d.user.name}! 👋`,'ok');
+    updateCartBadgeFromServer();
+  }catch(e){toast(e.message,'err');}
+  btn.disabled=false;btn.textContent='Login →';
+}
+
+async function doRegister(){
+  const btn=document.getElementById('reg-submit-btn');
+  const name=document.getElementById('r-name').value.trim();
+  const mobile=document.getElementById('r-mob').value.trim();
+  const email=document.getElementById('r-email').value.trim();
+  const pw=document.getElementById('r-pw').value;
+  const ref=document.getElementById('r-ref').value.trim().toUpperCase();
+  if(!name||!mobile||!email||!pw){toast('Fill all required fields','warn');return;}
+  if(!/^[A-Za-z ]{2,60}$/.test(name)){toast('Name must be letters only (2-60 chars)','warn');return;}
+  if(!/^\d{10}$/.test(mobile)){toast('Mobile must be exactly 10 digits','warn');return;}
+  if(!/^[\w+\-.]+@[\w\-.]+\.[a-z]{2,}$/i.test(email)){toast('Invalid email format','warn');return;}
+  if(pw.length<6){toast('Password must be at least 6 characters','warn');return;}
+  btn.disabled=true;btn.textContent='Creating account...';
+  try{
+    const d=await api('auth/register','POST',{name,mobile,email,password:pw,refer_code:ref});
+    S.token=d.token;S.user=d.user;
+    localStorage.setItem('drdev_token',d.token);
+    closeModal('auth-modal');updateAuthUI();
+    toast(`Welcome, ${d.user.name}! Account created 🎉`,'ok');
+    updateCartBadgeFromServer();
+  }catch(e){toast(e.message,'err');}
+  btn.disabled=false;btn.textContent='Create Account →';
+}
+
+function logout(){
+  S.token=null;S.user=null;S.cartCount=0;
+  localStorage.removeItem('drdev_token');
+  updateAuthUI();updateCartBadge();
+  navigate('home');toast('Logged out successfully','info');
+}
+
+function updateAuthUI(){
+  const u=S.user;
+  document.getElementById('login-btn').style.display=u?'none':'';
+  document.getElementById('user-menu').style.display=u?'':'none';
+  document.getElementById('wallet-nav-btn').style.display=u?'':'none';
+  if(u){
+    document.getElementById('nav-uname').textContent=u.name.split(' ')[0];
+    document.getElementById('nav-wallet').textContent=`₹${(u.wallet||0).toFixed(0)}`;
+  }
+}
+
+async function loadUser(){
+  if(!S.token)return;
+  try{
+    const d=await api('auth/me');
+    S.user={...d.user,id:d.id};
+    updateAuthUI();
+  }catch{S.token=null;localStorage.removeItem('drdev_token');}
+}
+
+function updateCartBadge(){document.getElementById('cart-count').textContent=S.cartCount;}
+
+async function updateCartBadgeFromServer(){
+  if(!S.user)return;
+  try{const d=await api('cart');S.cartCount=d.count||0;updateCartBadge();}catch{}
+}
+
+// ─── Settings ─────────────────────────────────────────────────────────────────
+async function loadSettings(){
+  try{
+    const d=await api('settings');S.settings=d;
+    document.getElementById('doc-title').textContent=d.site_title||'Dr. Dev Shop';
+    document.getElementById('hero-h1').innerHTML=`🛒 <span class="grd">${esc(d.site_title||'Dr. Dev Shop')}</span>`;
+    document.getElementById('hero-tag').textContent=d.site_tagline||'Your One-Stop Digital Store';
+    document.getElementById('footer-copy').textContent=d.copyright||'© Dr. Hamza 2026 | Dr. Dev';
+    if(d.announcement){const ab=document.getElementById('ann-bar');ab.textContent=d.announcement;ab.classList.remove('d-none');}
+    if(d.whatsapp){const wa=document.getElementById('wa-link');wa.classList.remove('d-none');wa.onclick=()=>window.open(`https://wa.me/${d.whatsapp}`,'_blank');}
+    if(d.site_color)document.documentElement.style.setProperty('--p',d.site_color);
+  }catch{}
+}
+
+// ─── Home ─────────────────────────────────────────────────────────────────────
+async function loadHome(){
+  try{
+    const d=await api('categories');S.categories=d.categories||[];
+    const cEl=document.getElementById('home-cats');
+    cEl.innerHTML=S.categories.length?S.categories.map(c=>`
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="cat-card" onclick="navigate('products',{catId:'${c.id}'})">
+          <span class="cat-icon">${c.icon||'📦'}</span>
+          <div class="cat-name">${esc(c.name)}</div>
+        </div>
+      </div>`).join(''):'<div class="col-12 text-center" style="color:var(--tm);padding:30px">No categories yet</div>';
+  }catch{}
+  try{
+    const d=await api('products?limit=8');
+    const pEl=document.getElementById('home-prods');
+    pEl.innerHTML=(d.products||[]).length?(d.products||[]).map(p=>prodCardHTML(p)).join('')
+      :'<div class="col-12 text-center" style="color:var(--tm);padding:30px">No products yet</div>';
+  }catch{}
+}
+
+// ─── Products ─────────────────────────────────────────────────────────────────
+async function loadProducts(search=''){
+  let url=`products?page=${S.prodPage}&limit=12`;
+  if(S.currentCatId)url+=`&category=${S.currentCatId}`;
+  if(search)url+=`&q=${encodeURIComponent(search)}`;
+  const cat=S.categories.find(c=>c.id===S.currentCatId);
+  document.getElementById('prod-bc').innerHTML=`
+    <a onclick="navigate('home')">🏠 Home</a>
+    <i class="fas fa-chevron-right" style="font-size:.65rem"></i>
+    ${cat?`<span>${cat.icon} ${esc(cat.name)}</span>`:search?`<span>Search: "${esc(search)}"</span>`:'<span>All Products</span>'}`;
+  document.getElementById('prods-title').textContent=cat?`${cat.icon} ${cat.name}`:search?`🔍 "${search}"`:' 🛍️ All Products';
+  document.getElementById('cat-chips').innerHTML=`
+    <span class="chip ${!S.currentCatId?'on':''}" onclick="S.currentCatId=null;S.prodPage=1;loadProducts()">All</span>
+    ${S.categories.map(c=>`<span class="chip ${S.currentCatId===c.id?'on':''}" onclick="S.currentCatId='${c.id}';S.prodPage=1;loadProducts()">${c.icon} ${esc(c.name)}</span>`).join('')}`;
+  const grid=document.getElementById('prods-grid');
+  grid.innerHTML=`<div class="col-12 text-center py-5"><div class="ring mx-auto"></div></div>`;
+  try{
+    const d=await api(url);S.prodPages=d.pages||1;
+    if(!(d.products||[]).length){
+      grid.innerHTML=`<div class="col-12"><div class="empty-state"><i class="fas fa-box-open"></i><p>No products found</p></div></div>`;
+    }else{grid.innerHTML=(d.products||[]).map(p=>prodCardHTML(p)).join('');}
+    const pag=document.getElementById('prods-pag');
+    pag.innerHTML=S.prodPages>1?Array.from({length:S.prodPages},(_,i)=>
+      `<button class="pag-btn ${i+1===S.prodPage?'on':''}" onclick="S.prodPage=${i+1};loadProducts('${search.replace(/'/g,"\\'")}');">${i+1}</button>`).join(''):'';
+  }catch(e){grid.innerHTML=`<div class="col-12 text-center" style="color:var(--err);padding:30px">${e.message}</div>`;}
+}
+
+function prodCardHTML(p){
+  const disc=p.original_price>p.price?Math.round((1-p.price/p.original_price)*100):0;
+  return `<div class="col-6 col-sm-4 col-md-3">
+    <div class="prod-card" onclick="navigate('product',{id:'${p.id}'})">
+      <div class="prod-img">
+        ${p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}" onerror="this.parentElement.innerHTML='📦'">`:getCatIcon(p.category_id)}
+        ${disc>0?`<span class="prod-disc">-${disc}%</span>`:''}
+      </div>
+      <div class="prod-body">
+        <div class="prod-name">${esc(p.name)}</div>
+        <div><span class="prod-price">₹${(p.price||0).toFixed(0)}</span>${disc>0?`<span class="prod-orig">₹${(p.original_price||0).toFixed(0)}</span>`:''}</div>
+        <button class="btn-pr btn-sm mt-2 w-100" onclick="event.stopPropagation();addToCart('${p.id}')">🛒 Add to Cart</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function getCatIcon(catId){const c=S.categories.find(x=>x.id===catId);return c?c.icon:'📦';}
+
+// ─── Product Detail ───────────────────────────────────────────────────────────
+async function loadProductDetail(pid){
+  const el=document.getElementById('pdtl-content');
+  el.innerHTML=`<div class="text-center py-5"><div class="ring mx-auto"></div></div>`;
+  try{
+    const d=await api(`products/${pid}`);
+    const p=d.product;const revs=d.reviews||[];
+    const cat=S.categories.find(c=>c.id===p.category_id)||{};
+    document.getElementById('pdtl-bc').innerHTML=`
+      <a onclick="navigate('home')">🏠 Home</a>
+      <i class="fas fa-chevron-right" style="font-size:.65rem"></i>
+      <a onclick="navigate('products',{catId:'${p.category_id}'})">${cat.icon||'📦'} ${esc(cat.name||'Products')}</a>
+      <i class="fas fa-chevron-right" style="font-size:.65rem"></i>
+      <span>${esc(p.name)}</span>`;
+    const disc=p.original_price>p.price?Math.round((1-p.price/p.original_price)*100):0;
+    const starsHTML=(n)=>Array.from({length:5},(_,i)=>`<i class="fa${i<Math.round(n)?'s':'r'} fa-star" style="color:${i<Math.round(n)?'var(--warn)':'var(--s3)'}"></i>`).join('');
+    el.innerHTML=`
+      <div class="row g-4 mb-4">
+        <div class="col-md-5">
+          <div class="card-d" style="height:280px;display:flex;align-items:center;justify-content:center;font-size:5rem">
+            ${p.image?`<img src="${esc(p.image)}" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:10px" onerror="this.parentElement.innerHTML='${cat.icon||'📦'}'">`:cat.icon||'📦'}
+          </div>
+        </div>
+        <div class="col-md-7">
+          <div class="card-d">
+            <h1 style="font-size:1.35rem;font-weight:800;margin-bottom:10px">${esc(p.name)}</h1>
+            <div class="d-flex align-items-center gap-3 mb-2 flex-wrap">
+              <div>${starsHTML(d.avg_rating||0)}</div>
+              <span style="color:var(--tm);font-size:.83rem">(${d.review_count||0} reviews)</span>
+              <span style="color:var(--tm);font-size:.83rem">👁 ${p.views||0} views</span>
+            </div>
+            <div class="mb-3">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:1.75rem;font-weight:900;color:var(--pl)">₹${(p.price||0).toFixed(0)}</span>
+              ${disc>0?`<span style="text-decoration:line-through;color:var(--tm);margin-left:10px">₹${(p.original_price||0).toFixed(0)}</span>
+              <span class="badge-s s-paid ms-2">SAVE ${disc}%</span>`:''}
+            </div>
+            ${p.description?`<p style="color:var(--tm);line-height:1.75;margin-bottom:16px;font-size:.9rem">${esc(p.description)}</p>`:''}
+            <div class="d-flex gap-3 flex-wrap">
+              <button class="btn-pr" onclick="addToCart('${p.id}')">🛒 Add to Cart</button>
+              <button class="btn-out" onclick="buyNow('${p.id}')">⚡ Buy Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-d">
+        <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+          <h3 style="font-family:'Orbitron',sans-serif;font-size:.95rem;margin:0">⭐ Reviews (${d.review_count||0})</h3>
+          <button class="btn-out btn-sm" onclick="openReviewModal('${p.id}')">✍️ Write Review</button>
+        </div>
+        ${revs.length?revs.map(r=>`
+          <div style="border-bottom:1px solid var(--bd);padding-bottom:14px;margin-bottom:14px">
+            <div class="d-flex align-items-center gap-3 mb-1 flex-wrap">
+              <strong style="font-size:.9rem">${esc(r.user_name)}</strong>
+              <div>${starsHTML(r.rating)}</div>
+              ${r.verified_purchase?'<span class="badge-s s-paid" style="font-size:.68rem">✓ Verified</span>':''}
+            </div>
+            <p style="color:var(--tm);font-size:.86rem;margin:4px 0">${esc(r.text)}</p>
+            <small style="color:var(--s3);font-size:.75rem">${fmtDate(r.created_at)}</small>
+          </div>`).join(''):'<div class="empty-state" style="padding:30px 0"><i class="far fa-star d-block"></i><p>No reviews yet. Be the first!</p></div>'}
+      </div>`;
+  }catch(e){el.innerHTML=`<div class="empty-state"><i class="fas fa-exclamation-circle" style="color:var(--err)"></i><p>${e.message}</p></div>`;}
+}
+
+// ─── Cart ─────────────────────────────────────────────────────────────────────
+async function addToCart(pid){
+  if(!requireAuth())return;
+  try{
+    const d=await api('cart/add','POST',{product_id:pid});
+    S.cartCount=d.count||0;updateCartBadge();
+    toast('Added to cart! 🛒','ok');
+  }catch(e){toast(e.message,'err');}
+}
+
+async function loadCart(){
+  if(!requireAuth())return;
+  const el=document.getElementById('cart-content');
+  el.innerHTML=`<div class="text-center py-5"><div class="ring mx-auto"></div></div>`;
+  try{
+    const d=await api('cart');const items=d.items||[];
+    S.cartCount=d.count||0;updateCartBadge();
+    if(!items.length){
+      el.innerHTML=`<div class="empty-state"><i class="fas fa-shopping-cart"></i><p>Your cart is empty</p><button class="btn-pr mt-3" onclick="navigate('home')">🛍️ Shop Now</button></div>`;return;
+    }
+    const walletCanCover=S.user&&(S.user.wallet||0)>=d.total;
+    el.innerHTML=`
+      <div class="row g-4">
+        <div class="col-lg-8">
+          ${items.map(i=>`
+            <div class="card-d mb-3 d-flex align-items-center gap-3 flex-wrap">
+              <div style="width:58px;height:58px;background:var(--s2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;overflow:hidden">
+                ${i.image?`<img src="${esc(i.image)}" style="width:100%;height:100%;object-fit:cover">`:getCatIcon(i.category_id)}
+              </div>
+              <div class="flex-grow-1">
+                <div style="font-weight:700;font-size:.9rem">${esc(i.name)}</div>
+                <div style="color:var(--pl);font-family:'JetBrains Mono',monospace;font-weight:700">₹${(i.price||0).toFixed(0)}</div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <button class="btn-icon" onclick="updateQty('${i.product_id}',${i.quantity-1})"><i class="fas fa-minus"></i></button>
+                <span style="min-width:28px;text-align:center;font-weight:700">${i.quantity}</span>
+                <button class="btn-icon" style="color:var(--ok);border-color:rgba(16,185,129,.3)" onclick="updateQty('${i.product_id}',${i.quantity+1})"><i class="fas fa-plus"></i></button>
+              </div>
+              <div style="font-weight:700;color:var(--ok);min-width:65px;text-align:right">₹${(i.line_total||0).toFixed(0)}</div>
+              <button class="btn-icon" onclick="removeFromCart('${i.product_id}')"><i class="fas fa-trash"></i></button>
+            </div>`).join('')}
+        </div>
+        <div class="col-lg-4">
+          <div class="card-d" style="position:sticky;top:80px">
+            <h4 style="font-family:'Orbitron',sans-serif;font-size:.95rem;margin-bottom:16px">🧾 Order Summary</h4>
+            <div class="d-flex justify-content-between mb-2"><span style="color:var(--tm)">Subtotal (${items.length} item${items.length>1?'s':''})</span><span>₹${(d.total||0).toFixed(0)}</span></div>
+            <div class="d-flex justify-content-between mb-2"><span style="color:var(--tm)">Delivery</span><span style="color:var(--ok)">FREE</span></div>
+            <div class="divider"></div>
+            <div class="d-flex justify-content-between mb-3"><strong>Total</strong><strong style="color:var(--pl);font-size:1.2rem;font-family:'JetBrains Mono',monospace">₹${(d.total||0).toFixed(0)}</strong></div>
+            <button class="btn-pr w-100" onclick="startCheckout(${JSON.stringify(items).replace(/</g,'\\u003c')},${d.total})">Checkout →</button>
+            ${walletCanCover?`<button class="btn-ok w-100 mt-2" onclick="walletCheckout(${JSON.stringify(items).replace(/</g,'\\u003c')},${d.total})">💳 Pay with Wallet (₹${(S.user.wallet||0).toFixed(0)})</button>`:''}
+          </div>
+        </div>
+      </div>`;
+  }catch(e){el.innerHTML=`<div class="empty-state"><i class="fas fa-exclamation-circle" style="color:var(--err)"></i><p>${e.message}</p></div>`;}
+}
+
+async function updateQty(pid,qty){
+  try{const d=await api('cart/update','POST',{product_id:pid,quantity:qty});S.cartCount=d.count;updateCartBadge();loadCart();}
+  catch(e){toast(e.message,'err');}
+}
+
+async function removeFromCart(pid){
+  try{const d=await api('cart/remove','POST',{product_id:pid});S.cartCount=d.count;updateCartBadge();loadCart();toast('Removed from cart','info');}
+  catch(e){toast(e.message,'err');}
+}
+
+// ─── Checkout ─────────────────────────────────────────────────────────────────
+async function startCheckout(items,total){
+  if(!requireAuth())return;
+  const enriched=[];
+  for(const item of items){
+    try{const pd=await api(`products/${item.product_id}`);enriched.push({...item,pFields:(pd.product&&pd.product.fields)||[]});}
+    catch{enriched.push({...item,pFields:[]});}
+  }
+  S.pendingOrder={items:enriched,total};
+  renderCheckoutModal(enriched,total,'utr');
+}
+
+async function walletCheckout(items,total){
+  if(!requireAuth())return;
+  if((S.user.wallet||0)<total){toast(`Insufficient balance. Need ₹${total}, have ₹${(S.user.wallet||0).toFixed(0)}`,'err');return;}
+  const enriched=items.map(i=>({...i,pFields:[]}));
+  S.pendingOrder={items:enriched,total};
+  renderCheckoutModal(enriched,total,'wallet');
+}
+
+function renderCheckoutModal(enriched,total,defaultMethod){
+  const el=document.getElementById('checkout-content');
+  const fieldsHTML=enriched.map(item=>{
+    if(!item.pFields||!item.pFields.length)return '';
+    return `<div class="card-d mb-3">
+      <h6 style="font-weight:700;margin-bottom:12px;font-size:.88rem">📋 Details for: <span style="color:var(--pl)">${esc(item.name)}</span></h6>
+      ${item.pFields.map(f=>`
+        <div class="f-group">
+          <label class="f-label">${esc(f.label||f.name)}${f.required?' <span style="color:var(--err)">*</span>':''}</label>
+          ${f.type==='select'?`<select class="f-ctrl" data-pid="${item.product_id}" data-field="${esc(f.name)}">
+            ${(f.options||[]).map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join('')}</select>`
+          :`<input class="f-ctrl" type="${f.type||'text'}" placeholder="${esc(f.placeholder||f.name)}"
+             data-pid="${item.product_id}" data-field="${esc(f.name)}"
+             ${f.required?'required':''} ${f.validation?`pattern="${esc(f.validation)}"`:''}`+`>`}
+          ${f.hint?`<small style="color:var(--tm)">${esc(f.hint)}</small>`:''}
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+  el.innerHTML=`
+    ${fieldsHTML}
+    <div class="card-d mb-3">
+      <h6 style="font-weight:700;margin-bottom:14px;font-size:.88rem">🚚 Delivery Info</h6>
+      <div class="row g-3">
+        <div class="col-6"><div class="f-group"><label class="f-label">Name</label><input class="f-ctrl" id="d-name" value="${S.user?esc(S.user.name):''}"></div></div>
+        <div class="col-6"><div class="f-group"><label class="f-label">Mobile</label><input class="f-ctrl" id="d-mob" type="tel" value="${S.user?'+91'+S.user.mobile:''}"></div></div>
+        <div class="col-12"><div class="f-group"><label class="f-label">Email</label><input class="f-ctrl" id="d-email" type="email" value="${S.user?esc(S.user.email):''}"></div></div>
+        <div class="col-6"><div class="f-group"><label class="f-label">State</label><input class="f-ctrl" id="d-state" placeholder="Maharashtra"></div></div>
+        <div class="col-6"><div class="f-group"><label class="f-label">PIN Code</label><input class="f-ctrl" id="d-pin" placeholder="400001" maxlength="6"></div></div>
+        <div class="col-12"><div class="f-group"><label class="f-label">Full Address</label><textarea class="f-ctrl" id="d-addr" rows="2" placeholder="House No, Street, City"></textarea></div></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <strong>Total</strong>
+      <strong style="font-size:1.35rem;color:var(--pl);font-family:'JetBrains Mono',monospace">₹${total.toFixed(0)}</strong>
+    </div>
+    <div class="d-flex gap-3 flex-wrap">
+      ${defaultMethod==='wallet'
+        ?`<button class="btn-ok flex-grow-1" onclick="placeOrder('wallet')">💳 Pay from Wallet (₹${(S.user?.wallet||0).toFixed(0)})</button>`
+        :`<button class="btn-pr flex-grow-1" onclick="placeOrder('utr')">📱 Pay via UPI/Bank</button>`}
+      ${(S.user?.wallet||0)>=total&&defaultMethod!=='wallet'?`<button class="btn-ok" onclick="placeOrder('wallet')">💳 Wallet</button>`:''}
+    </div>`;
+  openModal('checkout-modal');
+}
+
+async function placeOrder(payMethod){
+  if(!S.pendingOrder)return;
+  const itemsPayload=S.pendingOrder.items.map(item=>{
+    const fields={};
+    document.querySelectorAll(`[data-pid="${item.product_id}"]`).forEach(inp=>{
+      if(inp.required&&!inp.value.trim()){toast(`Fill all required fields for ${item.name}`,'warn');throw new Error('fill');}
+      fields[inp.dataset.field]=inp.value.trim();
+    });
+    return{product_id:item.product_id,quantity:item.quantity,fields};
+  });
+  const delivery={name:g('d-name'),mobile:g('d-mob'),email:g('d-email'),state:g('d-state'),pin:g('d-pin'),address:g('d-addr')};
+  try{
+    const d=await api('orders','POST',{items:itemsPayload,payment_method:payMethod,delivery});
+    S.cartCount=0;updateCartBadge();
+    closeModal('checkout-modal');
+    if(payMethod==='utr'){
+      showUTRModal(d.order_id,d.total);
+    }else{
+      toast('Order placed! Paid from wallet ✅','ok');
+      await loadUser();navigate('orders');
+    }
+  }catch(e){if(e.message!=='fill')toast(e.message,'err');}
+}
+
+async function buyNow(pid){
+  if(!requireAuth())return;
+  try{
+    await api('cart/add','POST',{product_id:pid});
+    const d=await api('cart');
+    S.pendingOrder=null;
+    await startCheckout(d.items,d.total);
+  }catch(e){toast(e.message,'err');}
+}
+
+function showUTRModal(orderId,total){
+  const s=S.settings;
+  document.getElementById('utr-content').innerHTML=`
+    ${s.upi_id?`<div class="card-d mb-3 text-center">
+      <div style="font-size:.82rem;color:var(--tm);margin-bottom:6px">💸 Pay to UPI ID:</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:1.15rem;font-weight:700;color:var(--pl);user-select:all">${esc(s.upi_id)}</div>
+      <div style="font-size:1.4rem;color:var(--ok);font-weight:700;margin-top:6px;font-family:'JetBrains Mono',monospace">₹${(total||0).toFixed(0)}</div>
+      ${s.upi_qr?`<img src="${esc(s.upi_qr)}" style="width:150px;height:150px;margin:12px auto;display:block;border-radius:10px;border:1px solid var(--bd)">`:''}</div>`:''}
+    <p style="color:var(--tm);font-size:.85rem;margin-bottom:14px">After payment, enter your 12-digit UTR / Transaction ID:</p>
+    <div class="f-group"><label class="f-label">UTR / Reference Number</label><input class="f-ctrl" id="utr-input" placeholder="e.g. 123456789012"></div>
+    <button class="btn-pr w-100" onclick="submitUTR('${orderId}')">✅ Submit & Verify</button>`;
+  openModal('utr-modal');
+}
+
+async function submitUTR(orderId){
+  const utr=document.getElementById('utr-input').value.trim();
+  if(!utr||utr.length<6){toast('Enter valid UTR number','warn');return;}
+  try{
+    const d=await api(`orders/${orderId}/utr`,'POST',{utr});
+    closeModal('utr-modal');toast(d.message||'UTR submitted! Verifying ⏳','ok');navigate('orders');
+  }catch(e){toast(e.message,'err');}
+}
+
+// ─── Orders ───────────────────────────────────────────────────────────────────
+async function loadOrders(){
+  const el=document.getElementById('orders-content');
+  el.innerHTML=`<div class="text-center py-5"><div class="ring mx-auto"></div></div>`;
+  try{
+    const d=await api('orders/history');const orders=d.orders||[];
+    if(!orders.length){
+      el.innerHTML=`<div class="empty-state"><i class="fas fa-box-open"></i><p>No orders yet</p><button class="btn-pr mt-3" onclick="navigate('home')">🛍️ Shop Now</button></div>`;return;
+    }
+    el.innerHTML=orders.map(o=>`
+      <div class="card-d mb-3">
+        <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3">
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--tm)">Order #${o.id}</div>
+            <div style="font-weight:700;font-size:.9rem">${(o.items||[]).map(i=>esc(i.name)).join(', ')}</div>
+          </div>
+          <div class="text-end">
+            <div style="font-size:1.1rem;font-weight:700;color:var(--pl);font-family:'JetBrains Mono',monospace">₹${(o.total||0).toFixed(0)}</div>
+            <span class="badge-s s-${o.payment_status}">${o.payment_status}</span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <small style="color:var(--tm)">${fmtDate(o.created_at)}</small>
+          <div class="d-flex gap-2 flex-wrap">
+            ${o.payment_status==='pending'?`<button class="btn-pr btn-sm" onclick="showUTRModal('${o.id}',${o.total})">💳 Pay Now</button>`:''}
+            ${o.note?`<span style="color:var(--tm);font-size:.8rem">💬 ${esc(o.note)}</span>`:''}
+          </div>
+        </div>
+        ${(o.items||[]).some(i=>i.fields&&Object.keys(i.fields).length)?`
+          <div class="mt-2" style="font-size:.8rem;color:var(--tm);display:flex;flex-wrap:wrap;gap:6px">
+            ${(o.items||[]).map(i=>Object.entries(i.fields||{}).map(([k,v])=>`<span class="chip" style="font-size:.75rem">${esc(k)}: <strong>${esc(v)}</strong></span>`).join('')).join('')}
+          </div>`:''}`).join('');
+  }catch(e){el.innerHTML=`<div class="empty-state"><i class="fas fa-exclamation-circle" style="color:var(--err)"></i><p>${e.message}</p></div>`;}
+}
+
+// ─── Wallet ───────────────────────────────────────────────────────────────────
+async function loadWallet(){
+  const el=document.getElementById('wallet-content');
+  el.innerHTML=`<div class="text-center py-5"><div class="ring mx-auto"></div></div>`;
+  try{
+    const d=await api('wallet');
+    el.innerHTML=`
+      <div class="row g-4 mb-4">
+        <div class="col-md-4">
+          <div class="wallet-big">
+            <div style="font-size:.82rem;opacity:.7;margin-bottom:5px">💳 Wallet Balance</div>
+            <div class="wal-amt">₹${(d.wallet||0).toFixed(2)}</div>
+            <div class="mt-3 d-flex gap-2 flex-wrap">
+              <button class="btn-pr btn-sm" style="background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.35);box-shadow:none" onclick="showDepositModal()">➕ Add</button>
+              <button class="btn-pr btn-sm" style="background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.35);box-shadow:none" onclick="showWithdrawModal()">🏧 Withdraw</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4"><div class="card-d text-center h-100"><div style="font-size:2rem;margin-bottom:6px">💰</div><div style="color:var(--tm);font-size:.82rem">Earned via Refer</div><div style="font-size:1.4rem;font-weight:800;color:var(--ok)">₹${(d.total_earned||0).toFixed(2)}</div></div></div>
+        <div class="col-md-4"><div class="card-d text-center h-100"><div style="font-size:2rem;margin-bottom:6px">🛒</div><div style="color:var(--tm);font-size:.82rem">Total Spent</div><div style="font-size:1.4rem;font-weight:800;color:var(--pl)">₹${(d.total_spent||0).toFixed(2)}</div></div></div>
+      </div>
+      <div class="tabs">
+        <button class="tab on" onclick="walTab('deps')">📥 Deposits</button>
+        <button class="tab" onclick="walTab('wds')">📤 Withdrawals</button>
+      </div>
+      <div id="wal-deps">
+        ${(d.deposits||[]).length?`<div class="tbl"><table><thead><tr><th>Date</th><th>Amount</th><th>UTR</th><th>Status</th></tr></thead><tbody>
+          ${d.deposits.map(dep=>`<tr><td>${fmtDate(dep.created_at)}</td><td style="color:var(--ok);font-family:'JetBrains Mono',monospace">₹${dep.amount}</td><td style="font-family:'JetBrains Mono',monospace;font-size:.78rem">${dep.utr||'-'}</td><td><span class="badge-s s-${dep.status}">${dep.status}</span></td></tr>`).join('')}
+          </tbody></table></div>`:'<div class="empty-state" style="padding:30px"><i class="fas fa-arrow-down"></i><p>No deposits yet</p></div>'}
+      </div>
+      <div id="wal-wds" class="d-none">
+        ${(d.withdrawals||[]).length?`<div class="tbl"><table><thead><tr><th>Date</th><th>Amount</th><th>UPI</th><th>Status</th><th>Note</th></tr></thead><tbody>
+          ${d.withdrawals.map(w=>`<tr><td>${fmtDate(w.created_at)}</td><td style="color:var(--warn);font-family:'JetBrains Mono',monospace">₹${w.amount}</td><td style="font-size:.8rem">${w.upi_id||'-'}</td><td><span class="badge-s s-${w.status}">${w.status}</span></td><td style="color:var(--tm);font-size:.8rem">${w.note||'-'}</td></tr>`).join('')}
+          </tbody></table></div>`:'<div class="empty-state" style="padding:30px"><i class="fas fa-arrow-up"></i><p>No withdrawals yet</p></div>'}
+      </div>`;
+  }catch(e){el.innerHTML=`<div class="empty-state"><i class="fas fa-exclamation-circle" style="color:var(--err)"></i><p>${e.message}</p></div>`;}
+}
+
+function walTab(t){
+  document.querySelectorAll('#page-wallet .tab').forEach((b,i)=>b.classList.toggle('on',i===(t==='deps'?0:1)));
+  document.getElementById('wal-deps').classList.toggle('d-none',t!=='deps');
+  document.getElementById('wal-wds').classList.toggle('d-none',t==='deps');
+}
+
+function showDepositModal(){
+  const s=S.settings;
+  document.getElementById('dep-content').innerHTML=`
+    ${s.upi_id?`<div class="card-d mb-3 text-center">
+      <div style="color:var(--tm);font-size:.8rem;margin-bottom:5px">Pay to UPI:</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--pl)">${esc(s.upi_id)}</div>
+      ${s.upi_qr?`<img src="${esc(s.upi_qr)}" style="width:140px;height:140px;margin:10px auto;display:block;border-radius:10px">`:''}</div>`:''}
+    <div class="f-group"><label class="f-label">Amount (₹)</label><input class="f-ctrl" id="dep-amt" type="number" min="1" placeholder="Enter amount to deposit"></div>
+    <div class="f-group"><label class="f-label">UTR / Transaction ID</label><input class="f-ctrl" id="dep-utr" placeholder="12-digit UTR reference number"></div>
+    <button class="btn-pr w-100" onclick="submitDeposit()">Submit Deposit Request</button>`;
+  openModal('dep-modal');
+}
+
+async function submitDeposit(){
+  const amt=parseFloat(document.getElementById('dep-amt').value);
+  const utr=document.getElementById('dep-utr').value.trim();
+  if(!amt||amt<=0){toast('Enter valid amount','warn');return;}
+  if(!utr||utr.length<6){toast('Enter valid UTR','warn');return;}
+  try{const d=await api('wallet/deposit','POST',{amount:amt,utr});closeModal('dep-modal');toast(d.message,'ok');loadWallet();}
+  catch(e){toast(e.message,'err');}
+}
+
+function showWithdrawModal(){
+  document.getElementById('wd-content').innerHTML=`
+    <p style="color:var(--tm);font-size:.85rem;margin-bottom:16px">Min withdrawal: ₹${S.settings.min_withdraw||10} &nbsp;|&nbsp; Balance: <strong style="color:var(--ok)">₹${(S.user?.wallet||0).toFixed(2)}</strong></p>
+    <div class="f-group"><label class="f-label">Amount (₹)</label><input class="f-ctrl" id="wd-amt" type="number" min="${S.settings.min_withdraw||10}" placeholder="Minimum ₹${S.settings.min_withdraw||10}"></div>
+    <div class="f-group"><label class="f-label">UPI ID</label><input class="f-ctrl" id="wd-upi" placeholder="yourname@upi"></div>
+    <button class="btn-pr w-100" onclick="submitWithdraw()">Submit Withdrawal</button>`;
+  openModal('wd-modal');
+}
+
+async function submitWithdraw(){
+  const amt=parseFloat(document.getElementById('wd-amt').value);
+  const upi=document.getElementById('wd-upi').value.trim();
+  if(!amt||amt<(S.settings.min_withdraw||10)){toast(`Min withdrawal ₹${S.settings.min_withdraw||10}`,'warn');return;}
+  if(!upi){toast('Enter UPI ID','warn');return;}
+  try{const d=await api('wallet/withdraw','POST',{amount:amt,upi_id:upi});closeModal('wd-modal');toast(d.message,'ok');loadWallet();}
+  catch(e){toast(e.message,'err');}
+}
+
+// ─── Refer ────────────────────────────────────────────────────────────────────
+async function loadRefer(){
+  const el=document.getElementById('refer-content');
+  el.innerHTML=`<div class="text-center py-5"><div class="ring mx-auto"></div></div>`;
+  try{
+    const d=await api('refer');
+    el.innerHTML=`
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3"><div class="card-d text-center"><div style="font-size:1.8rem">🎯</div><div style="color:var(--tm);font-size:.8rem">Commission</div><div style="font-size:1.6rem;font-weight:800;color:var(--pl)">${d.commission}%</div></div></div>
+        <div class="col-6 col-md-3"><div class="card-d text-center"><div style="font-size:1.8rem">👥</div><div style="color:var(--tm);font-size:.8rem">Total Referred</div><div style="font-size:1.6rem;font-weight:800;color:var(--ac)">${d.total_referred}</div></div></div>
+        <div class="col-6 col-md-3"><div class="card-d text-center"><div style="font-size:1.8rem">✅</div><div style="color:var(--tm);font-size:.8rem">Credited</div><div style="font-size:1.6rem;font-weight:800;color:var(--ok)">${d.credited_count}</div></div></div>
+        <div class="col-6 col-md-3"><div class="card-d text-center"><div style="font-size:1.8rem">💰</div><div style="color:var(--tm);font-size:.8rem">Total Earned</div><div style="font-size:1.6rem;font-weight:800;color:var(--warn)">₹${(d.total_earned||0).toFixed(2)}</div></div></div>
+      </div>
+      <div class="card-d mb-3">
+        <h5 style="font-family:'Orbitron',sans-serif;font-size:.95rem;margin-bottom:14px">🔗 Your Refer Link</h5>
+        <div class="ref-box"><span style="flex:1;overflow:hidden;text-overflow:ellipsis">${d.refer_url}</span>
+          <button class="btn-pr btn-sm" onclick="copyText('${d.refer_url}','Link copied! 📋')"><i class="fas fa-copy"></i></button>
+        </div>
+        <div class="mt-3 d-flex gap-2 flex-wrap">
+          <button class="btn-out btn-sm" onclick="shareLink('${d.refer_url}')"><i class="fas fa-share-alt me-1"></i>Share</button>
+          <button class="btn-ac btn-sm" onclick="copyText('${d.refer_url}','Link copied! 📋')"><i class="fas fa-copy me-1"></i>Copy</button>
+        </div>
+      </div>
+      <div class="card-d">
+        <h5 style="font-family:'Orbitron',sans-serif;font-size:.95rem;margin-bottom:14px">ℹ️ How Refer &amp; Earn Works</h5>
+        ${[['1️⃣','Share Your Link','Share your unique referral link with friends &amp; family'],
+           ['2️⃣','Friend Registers','They sign up using your refer link'],
+           ['3️⃣','Friend Purchases','Your friend makes a purchase on our platform'],
+           ['4️⃣','You Earn','You instantly get ${d.commission}% commission credited to your wallet!']
+          ].map(([e2,t,desc])=>`<div class="d-flex gap-3 align-items-start mb-3"><span style="font-size:1.3rem">${e2}</span><div><strong style="font-size:.9rem">${t}</strong><p style="color:var(--tm);font-size:.82rem;margin:3px 0 0">${desc}</p></div></div>`).join('')}
+      </div>`;
+  }catch(e){el.innerHTML=`<div class="empty-state"><i class="fas fa-exclamation-circle" style="color:var(--err)"></i><p>${e.message}</p></div>`;}
+}
+
+// ─── Profile ──────────────────────────────────────────────────────────────────
+async function loadProfile(){
+  const u=S.user;if(!u)return;
+  const el=document.getElementById('profile-content');
+  el.innerHTML=`
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card-d text-center">
+          <div style="width:76px;height:76px;background:linear-gradient(135deg,var(--p),var(--ac));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:900;margin:0 auto 14px;color:#fff">
+            ${u.name?.charAt(0)?.toUpperCase()||'U'}
+          </div>
+          <h4 style="font-weight:800;font-size:1.1rem">${esc(u.name)}</h4>
+          <p style="color:var(--tm);font-size:.82rem;margin:4px 0">${esc(u.email)}</p>
+          <p style="color:var(--tm);font-size:.82rem">+91 ${esc(u.mobile||'')}</p>
+          <div class="mt-3 card-d" style="background:var(--s2)">
+            <div style="font-size:.78rem;color:var(--tm)">My Refer Code</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;color:var(--pl)">${u.refer_code||''}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="row g-3 mb-3">
+          ${[['💳 Wallet',`₹${(u.wallet||0).toFixed(2)}`,'var(--ok)'],['💰 Earned',`₹${(u.total_earned||0).toFixed(2)}`,'var(--ac)'],['🛒 Spent',`₹${(u.total_spent||0).toFixed(2)}`,'var(--pl)']
+            ].map(([l,v,c])=>`<div class="col-4"><div class="card-d text-center"><div style="font-size:.78rem;color:var(--tm)">${l}</div><div style="font-size:1.25rem;font-weight:800;color:${c}">${v}</div></div></div>`).join('')}
+        </div>
+        <div class="card-d mb-3">
+          <h5 style="font-family:'Orbitron',sans-serif;font-size:.9rem;margin-bottom:14px">⚡ Quick Actions</h5>
+          <div class="d-flex gap-3 flex-wrap">
+            <button class="btn-pr btn-sm" onclick="navigate('orders')">📦 Orders</button>
+            <button class="btn-out btn-sm" onclick="navigate('wallet')">💳 Wallet</button>
+            <button class="btn-ac btn-sm" onclick="navigate('refer')">🎁 Refer &amp; Earn</button>
+          </div>
+        </div>
+        <div class="card-d">
+          <p style="color:var(--tm);font-size:.82rem">Member since: ${fmtDate(u.created_at)}</p>
+          <button class="btn-icon mt-2" style="color:var(--err);border-color:rgba(239,68,68,.3)" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ─── Rules ────────────────────────────────────────────────────────────────────
+function loadRules(){
+  document.getElementById('rules-content').innerHTML=`
+    <div class="card-d" style="line-height:1.9;color:var(--tm);font-size:.9rem">
+      ${(S.settings.rules||'No rules published yet.').replace(/\n/g,'<br>')}
+    </div>`;
+}
+
+// ─── Reviews ─────────────────────────────────────────────────────────────────
+function openReviewModal(pid){
+  if(!requireAuth())return;
+  document.getElementById('rev-content').innerHTML=`
+    <div class="f-group">
+      <label class="f-label">Your Rating</label>
+      <div id="star-inp">${[1,2,3,4,5].map(n=>`<span class="star-i" data-v="${n}" onclick="setStars(${n})">★</span>`).join('')}</div>
+      <input type="hidden" id="rev-rating" value="5">
+    </div>
+    <div class="f-group">
+      <label class="f-label">Your Review</label>
+      <textarea class="f-ctrl" id="rev-text" rows="4" placeholder="Share your experience (min 5 characters)..."></textarea>
+    </div>
+    <button class="btn-pr w-100" onclick="submitReview('${pid}')">Submit Review ⭐</button>`;
+  setStars(5);openModal('rev-modal');
+}
+
+function setStars(n){
+  document.getElementById('rev-rating').value=n;
+  document.querySelectorAll('.star-i').forEach((s,i)=>s.classList.toggle('on',i<n));
+}
+
+async function submitReview(pid){
+  const rating=parseInt(document.getElementById('rev-rating').value);
+  const text=document.getElementById('rev-text').value.trim();
+  if(!text||text.length<5){toast('Write at least 5 characters','warn');return;}
+  try{
+    await api('reviews','POST',{product_id:pid,rating,text});
+    closeModal('rev-modal');toast('Review submitted! ⭐','ok');loadProductDetail(pid);
+  }catch(e){toast(e.message,'err');}
+}
+
+// ─── Search ───────────────────────────────────────────────────────────────────
+function debounceSearch(val){
+  clearTimeout(S.searchTimer);
+  S.searchTimer=setTimeout(()=>{
+    if(val.trim().length>=2){S.currentCatId=null;navigate('products',{search:val.trim()});}
+    else if(!val.trim()&&S.currentPage==='products')loadProducts();
+  },420);
+}
+
+// ─── Utils ────────────────────────────────────────────────────────────────────
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function g(id){const el=document.getElementById(id);return el?el.value:'';}
+function fmtDate(iso){if(!iso)return'-';try{return new Date(iso).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch{return iso;}}
+function copyText(txt,msg='Copied!'){navigator.clipboard.writeText(txt).then(()=>toast(msg,'ok')).catch(()=>{const i=document.createElement('input');i.value=txt;document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();toast(msg,'ok');});}
+function shareLink(url){if(navigator.share)navigator.share({title:'Dr. Dev Shop',url}).catch(()=>{});else copyText(url,'Link copied!');}
+
+// ─── Refer URL Handling ───────────────────────────────────────────────────────
+function checkReferURL(){
+  const ref=new URLSearchParams(location.search).get('ref');
+  if(ref&&!S.user){
+    localStorage.setItem('pending_ref',ref);
+    showAuth();authTab('register');
+    setTimeout(()=>{const el=document.getElementById('r-ref');if(el){el.value=ref;}},200);
+  }
+  if(!S.user){const pr=localStorage.getItem('pending_ref');if(pr){const el=document.getElementById('r-ref');if(el)el.value=pr;}}
+}
+
+// ─── Notifications ────────────────────────────────────────────────────────────
+async function checkNotifications(){
+  try{const d=await api('notifications');(d.notifications||[]).slice(0,1).forEach(n=>{if(n.message)toast(`📢 ${n.title||'Notice'}: ${n.message}`,'info');});}catch{}
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+async function init(){
+  document.getElementById('loader').style.display='flex';
+  await loadSettings();
+  await loadUser();
+  if(S.user)await updateCartBadgeFromServer();
+  try{const cd=await api('categories');S.categories=cd.categories||[];}catch{}
+  await loadHome();
+  checkReferURL();
+  setTimeout(checkNotifications,2000);
+  document.getElementById('loader').style.display='none';
+}
+
+window.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
