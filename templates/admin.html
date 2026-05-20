@@ -119,7 +119,7 @@ textarea.f-ctrl{resize:vertical}
 </div>
 
 <!-- ADMIN PANEL -->
-<div id="admin-panel" class="d-none" style="display:flex">
+<div id="admin-panel" style="display:none;flex-direction:row;min-height:100vh">
 
   <!-- SIDEBAR -->
   <div class="sidebar">
@@ -449,10 +449,11 @@ async function doAdminLogin(){
     const d=await api('admin/login','POST',{username:u,password:p});
     A.token=d.token;localStorage.setItem('admin_token',d.token);
     document.getElementById('login-screen').style.display='none';
-    document.getElementById('admin-panel').classList.remove('d-none');
-    document.getElementById('admin-panel').style.display='flex';
+    const panel=document.getElementById('admin-panel');
+    panel.style.display='flex';
     loadDashboard();loadCats();
-  }catch(e){toast(e.message,'err');}
+    toast('Welcome, Admin! 👋','ok');
+  }catch(e){toast(e.message||'Login failed','err');}
   btn.disabled=false;btn.textContent='Login to Admin →';
 }
 
@@ -962,7 +963,6 @@ function filterTable(tblId,q){
     // Try auto-login with saved token
     api('admin/stats').then(()=>{
       document.getElementById('login-screen').style.display='none';
-      document.getElementById('admin-panel').classList.remove('d-none');
       document.getElementById('admin-panel').style.display='flex';
       loadDashboard();loadCats();
     }).catch(()=>{localStorage.removeItem('admin_token');A.token=null;});
