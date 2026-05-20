@@ -367,25 +367,32 @@ document.addEventListener('click',e=>{if(e.target.classList.contains('overlay'))
 
 // ─── Navigate ─────────────────────────────────────────────────────────────────
 function navigate(page,extra={}){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  // Guard protected pages — check auth BEFORE switching pages
+  const guarded=['cart','orders','wallet','refer','profile'];
+  if(guarded.includes(page)&&!S.user){
+    toast('Please login to continue 🔑','warn');
+    showAuth();
+    return; // Stay on current page
+  }
+  document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('on'));
   document.querySelectorAll('.bot-item').forEach(b=>b.classList.remove('on'));
   S.currentPage=page;
-  const el=document.getElementById(`page-${page}`);
-  if(el) el.classList.add('on');
+  const pageEl=document.getElementById(`page-${page}`);
+  if(pageEl) pageEl.classList.add('on');
   document.querySelector(`.bot-item[data-page="${page}"]`)?.classList.add('on');
   window.scrollTo({top:0,behavior:'smooth'});
   if(page==='home')loadHome();
-  if(page==='products'){S.currentCatId=extra.catId||null;S.prodPage=extra.page||1;loadProducts(extra.search||'');}
-  if(page==='product'){S.currentProdId=extra.id;loadProductDetail(extra.id);}
-  if(page==='cart')loadCart();
-  if(page==='orders')requireAuth()&&loadOrders();
-  if(page==='wallet')requireAuth()&&loadWallet();
-  if(page==='refer')requireAuth()&&loadRefer();
-  if(page==='profile')requireAuth()&&loadProfile();
-  if(page==='rules')loadRules();
+  else if(page==='products'){S.currentCatId=extra.catId||null;S.prodPage=extra.page||1;loadProducts(extra.search||'');}
+  else if(page==='product'){S.currentProdId=extra.id;loadProductDetail(extra.id);}
+  else if(page==='cart')loadCart();
+  else if(page==='orders')loadOrders();
+  else if(page==='wallet')loadWallet();
+  else if(page==='refer')loadRefer();
+  else if(page==='profile')loadProfile();
+  else if(page==='rules')loadRules();
 }
 
-function requireAuth(){if(!S.user){toast('Please login first 🔑','warn');showAuth();return false;}return true;}
+function requireAuth(){return !!S.user;}
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 function showAuth(){openModal('auth-modal');}
@@ -617,7 +624,7 @@ async function loadProductDetail(pid){
 
 // ─── Cart ─────────────────────────────────────────────────────────────────────
 async function addToCart(pid){
-  if(!requireAuth())return;
+  if(!S.user){toast('Please login to add to cart 🔑','warn');showAuth();return;}
   try{
     const d=await api('cart/add','POST',{product_id:pid});
     S.cartCount=d.count||0;updateCartBadge();
@@ -626,7 +633,6 @@ async function addToCart(pid){
 }
 
 async function loadCart(){
-  if(!requireAuth())return;
   const el=document.getElementById('cart-content');
   el.innerHTML=`<div class="text-center py-5"><div class="ring mx-auto"></div></div>`;
   try{
@@ -684,7 +690,7 @@ async function removeFromCart(pid){
 
 // ─── Checkout ─────────────────────────────────────────────────────────────────
 async function startCheckout(items,total){
-  if(!requireAuth())return;
+  if(!S.user){toast('Please login to checkout 🔑','warn');showAuth();return;}
   const enriched=[];
   for(const item of items){
     try{const pd=await api(`products/${item.product_id}`);enriched.push({...item,pFields:(pd.product&&pd.product.fields)||[]});}
@@ -772,7 +778,7 @@ async function placeOrder(payMethod){
 }
 
 async function buyNow(pid){
-  if(!requireAuth())return;
+  if(!S.user){toast('Please login to purchase 🔑','warn');showAuth();return;}
   try{
     await api('cart/add','POST',{product_id:pid});
     const d=await api('cart');
@@ -1008,7 +1014,7 @@ function loadRules(){
 
 // ─── Reviews ─────────────────────────────────────────────────────────────────
 function openReviewModal(pid){
-  if(!requireAuth())return;
+  if(!S.user){toast('Please login to write a review 🔑','warn');showAuth();return;}
   document.getElementById('rev-content').innerHTML=`
     <div class="f-group">
       <label class="f-label">Your Rating</label>
@@ -1042,8 +1048,17 @@ async function submitReview(pid){
 function debounceSearch(val){
   clearTimeout(S.searchTimer);
   S.searchTimer=setTimeout(()=>{
-    if(val.trim().length>=2){S.currentCatId=null;navigate('products',{search:val.trim()});}
-    else if(!val.trim()&&S.currentPage==='products')loadProducts();
+    const q=val.trim();
+    if(q.length>=2){
+      // Directly switch page without auth guard (products page is public)
+      document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('on'));
+      document.querySelectorAll('.bot-item').forEach(b=>b.classList.remove('on'));
+      document.getElementById('page-products').classList.add('on');
+      S.currentPage='products';S.currentCatId=null;S.prodPage=1;
+      loadProducts(q);
+    }else if(!q&&S.currentPage==='products'){
+      loadProducts('');
+    }
   },420);
 }
 
