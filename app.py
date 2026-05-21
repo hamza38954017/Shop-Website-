@@ -4,7 +4,7 @@ Dr. Dev Shop — Full E-Commerce Platform
 Author: Dr. Hamza 2026  |  © Dr. Dev | All Rights Reserved
 """
 
-import os, re, json, time, string, secrets, hashlib, logging, uuid
+import os, re, json, time, string, secrets, hashlib, logging, uuid, threading
 from datetime import datetime, timezone, timedelta
 from functools import wraps
 
@@ -34,12 +34,17 @@ limiter = Limiter(
     default_limits=["600/day", "120/hour"]
 )
 
-# ─── Firebase REST Helper ───────────────────────────────────────────────────────
+_FB_OK = "YOUR-PROJECT" not in FIREBASE_BASE  # False when placeholder URL used
+
 def fb(path: str, method="GET", data=None, params=None):
+    if not _FB_OK and method != "GET":
+        # Don't waste time writing to a placeholder DB
+        log.warning(f"Firebase not configured — skipping {method} {path}")
+        return None
     url = f"{FIREBASE_BASE}/{path}.json"
     p   = params or {}
     try:
-        kw = dict(params=p, timeout=12)
+        kw = dict(params=p, timeout=5)          # ← reduced from 12s to 5s
         if   method == "GET":    r = requests.get(url, **kw)
         elif method == "PUT":    r = requests.put(url, json=data, **kw)
         elif method == "POST":   r = requests.post(url, json=data, **kw)
@@ -124,9 +129,10 @@ INJECT_PATTERNS = [
 
 @app.before_request
 def waf():
-    if request.path.startswith("/static"): return
-    # Log visitor
-    _log_visitor()
+    skip = ("/static", "/favicon")
+    if any(request.path.startswith(s) for s in skip): return
+    # Non-blocking visitor log — runs in background thread, never delays requests
+    _log_visitor_async()
     # WAF: check query params, form fields, JSON body
     all_vals = list(request.args.values()) + list(request.form.values())
     try:
@@ -147,18 +153,21 @@ def _extract_strings(obj, depth=0):
         return [s for i in obj for s in _extract_strings(i, depth+1)]
     return [str(obj)]
 
-def _log_visitor():
-    try:
-        fb("visitor_logs", "POST", {
-            "ip":        request.remote_addr,
-            "ua":        request.headers.get("User-Agent","")[:200],
-            "screen":    request.headers.get("X-Screen",""),
-            "url":       request.path,
-            "method":    request.method,
-            "referer":   request.headers.get("Referer","")[:200],
-            "timestamp": ts()
-        })
-    except: pass
+def _log_visitor_async():
+    """Fire-and-forget visitor log — never blocks the request."""
+    data = {
+        "ip":        request.remote_addr,
+        "ua":        request.headers.get("User-Agent", "")[:200],
+        "screen":    request.headers.get("X-Screen", ""),
+        "url":       request.path,
+        "method":    request.method,
+        "referer":   request.headers.get("Referer", "")[:200],
+        "timestamp": ts()
+    }
+    def _write():
+        try: fb("visitor_logs", "POST", data)
+        except: pass
+    threading.Thread(target=_write, daemon=True).start()
 
 @app.after_request
 def sec_headers(resp):
