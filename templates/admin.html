@@ -16,14 +16,14 @@ body{background:var(--bg);color:var(--tx);font-family:'Syne',sans-serif;min-heig
 .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 30% 50%,rgba(124,58,237,.12),transparent 60%),var(--bg)}
 .login-box{background:var(--s1);border:1px solid var(--bd);border-radius:20px;padding:36px;width:100%;max-width:420px;box-shadow:0 24px 64px rgba(0,0,0,.7)}
 /* LAYOUT */
-.sidebar{width:240px;background:var(--s1);border-right:1px solid var(--bd);height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:500;transition:.3s}
-.sidebar-logo{padding:20px;font-family:'Orbitron',sans-serif;font-weight:900;font-size:1rem;background:linear-gradient(135deg,var(--pl),var(--ac));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border-bottom:1px solid var(--bd)}
-.nav-item{display:flex;align-items:center;gap:11px;padding:12px 20px;color:var(--tm);cursor:pointer;transition:.25s;font-size:.88rem;font-weight:600;border-left:3px solid transparent;text-decoration:none}
+.sidebar{width:240px;background:var(--s1);border-right:1px solid var(--bd);height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+.sidebar-logo{padding:20px;font-family:'Orbitron',sans-serif;font-weight:900;font-size:1rem;background:linear-gradient(135deg,var(--pl),var(--ac));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border-bottom:1px solid var(--bd);flex-shrink:0}
+.nav-item{display:flex;align-items:center;gap:11px;padding:12px 20px;color:var(--tm);cursor:pointer;transition:.25s;font-size:.88rem;font-weight:600;border-left:3px solid transparent;background:none;border-top:none;border-right:none;border-bottom:none;width:100%;text-align:left;font-family:'Syne',sans-serif}
 .nav-item:hover{color:var(--tx);background:var(--s2)}
 .nav-item.on{color:var(--pl);background:rgba(124,58,237,.1);border-left-color:var(--p)}
-.nav-item i{width:18px;text-align:center}
+.nav-item i{width:18px;text-align:center;flex-shrink:0}
 .nav-sep{height:1px;background:var(--bd);margin:8px 0}
-.main-content{margin-left:240px;padding:24px;min-height:100vh}
+.main-content{margin-left:240px;padding:24px;min-height:100vh;flex:1}
 .top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
 .top-bar-title{font-family:'Orbitron',sans-serif;font-weight:700;font-size:1.15rem}
 /* CARDS */
@@ -99,7 +99,14 @@ textarea.f-ctrl{resize:vertical}
 .field-del{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--err);cursor:pointer;font-size:.9rem}
 /* CHART CONTAINER */
 .chart-wrap{position:relative;height:220px}
-@media(max-width:900px){.sidebar{width:60px}.sidebar-logo{font-size:0;padding:20px 12px}.nav-item span{display:none}.nav-item{justify-content:center;padding:14px}.main-content{margin-left:60px}}
+@media(max-width:900px){
+  .sidebar{width:60px}
+  .sidebar-logo{font-size:0;padding:18px 12px;text-align:center}
+  .sidebar-logo::after{content:'⚡';font-size:1.2rem;background:linear-gradient(135deg,var(--pl),var(--ac));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .nav-item span{display:none}
+  .nav-item{justify-content:center;padding:14px;gap:0}
+  .main-content{margin-left:60px;padding:14px}
+}
 </style>
 </head>
 <body>
@@ -112,20 +119,20 @@ textarea.f-ctrl{resize:vertical}
   <div class="sidebar">
     <div class="sidebar-logo">⚡ DR. DEV ADMIN</div>
     <nav style="flex:1;overflow-y:auto;padding:8px 0">
-      <a class="nav-item on" onclick="showSection('dashboard')" data-sec="dashboard"><i class="fas fa-chart-line"></i><span>Dashboard</span></a>
-      <a class="nav-item" onclick="showSection('users')" data-sec="users"><i class="fas fa-users"></i><span>Users</span></a>
+      <button type="button" class="nav-item on" onclick="showSection('dashboard')" data-sec="dashboard"><i class="fas fa-chart-line"></i><span>Dashboard</span></button>
+      <button type="button" class="nav-item" onclick="showSection('users')" data-sec="users"><i class="fas fa-users"></i><span>Users</span></button>
       <div class="nav-sep"></div>
-      <a class="nav-item" onclick="showSection('categories')" data-sec="categories"><i class="fas fa-tags"></i><span>Categories</span></a>
-      <a class="nav-item" onclick="showSection('products')" data-sec="products"><i class="fas fa-box"></i><span>Products</span></a>
+      <button type="button" class="nav-item" onclick="showSection('categories')" data-sec="categories"><i class="fas fa-tags"></i><span>Categories</span></button>
+      <button type="button" class="nav-item" onclick="showSection('products')" data-sec="products"><i class="fas fa-box"></i><span>Products</span></button>
       <div class="nav-sep"></div>
-      <a class="nav-item" onclick="showSection('orders')" data-sec="orders"><i class="fas fa-shopping-bag"></i><span>Orders</span></a>
-      <a class="nav-item" onclick="showSection('deposits')" data-sec="deposits"><i class="fas fa-arrow-down-to-bracket"></i><span>Deposits</span></a>
-      <a class="nav-item" onclick="showSection('withdrawals')" data-sec="withdrawals"><i class="fas fa-arrow-up-from-bracket"></i><span>Withdrawals</span></a>
+      <button type="button" class="nav-item" onclick="showSection('orders')" data-sec="orders"><i class="fas fa-shopping-bag"></i><span>Orders</span></button>
+      <button type="button" class="nav-item" onclick="showSection('deposits')" data-sec="deposits"><i class="fas fa-arrow-down"></i><span>Deposits</span></button>
+      <button type="button" class="nav-item" onclick="showSection('withdrawals')" data-sec="withdrawals"><i class="fas fa-arrow-up"></i><span>Withdrawals</span></button>
       <div class="nav-sep"></div>
-      <a class="nav-item" onclick="showSection('reviews')" data-sec="reviews"><i class="fas fa-star"></i><span>Reviews</span></a>
-      <a class="nav-item" onclick="showSection('broadcast')" data-sec="broadcast"><i class="fas fa-bullhorn"></i><span>Broadcast</span></a>
-      <a class="nav-item" onclick="showSection('logs')" data-sec="logs"><i class="fas fa-list-alt"></i><span>Visitor Logs</span></a>
-      <a class="nav-item" onclick="showSection('settings')" data-sec="settings"><i class="fas fa-cog"></i><span>Settings</span></a>
+      <button type="button" class="nav-item" onclick="showSection('reviews')" data-sec="reviews"><i class="fas fa-star"></i><span>Reviews</span></button>
+      <button type="button" class="nav-item" onclick="showSection('broadcast')" data-sec="broadcast"><i class="fas fa-bullhorn"></i><span>Broadcast</span></button>
+      <button type="button" class="nav-item" onclick="showSection('logs')" data-sec="logs"><i class="fas fa-list-alt"></i><span>Visitor Logs</span></button>
+      <button type="button" class="nav-item" onclick="showSection('settings')" data-sec="settings"><i class="fas fa-cog"></i><span>Settings</span></button>
     </nav>
   </div>
 
