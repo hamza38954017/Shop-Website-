@@ -112,9 +112,17 @@ textarea.f-ctrl{resize:vertical}
       <div style="font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:900;background:linear-gradient(135deg,var(--pl),var(--ac));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">⚡ DR. DEV</div>
       <div style="color:var(--tm);font-size:.85rem;margin-top:5px">Admin Control Panel</div>
     </div>
-    <div class="f-group"><label class="f-label">👤 Username</label><input class="f-ctrl" id="a-user" placeholder="admin" value="admin" onkeydown="if(event.key==='Enter')doAdminLogin()"></div>
-    <div class="f-group"><label class="f-label">🔒 Password</label><input class="f-ctrl" id="a-pw" type="password" placeholder="admin123" onkeydown="if(event.key==='Enter')doAdminLogin()"></div>
-    <button class="btn-pr w-100 mt-2" onclick="doAdminLogin()" id="login-btn-a">Login to Admin →</button>
+    <!-- Inline error box — always visible when error occurs -->
+    <div id="login-err" style="display:none;background:rgba(239,68,68,.15);border:1px solid var(--err);border-radius:10px;padding:11px 14px;color:var(--err);font-size:.85rem;margin-bottom:14px;text-align:center"></div>
+    <div class="f-group">
+      <label class="f-label">👤 Username</label>
+      <input class="f-ctrl" id="a-user" placeholder="admin" value="admin" onkeydown="if(event.key==='Enter')doAdminLogin()">
+    </div>
+    <div class="f-group">
+      <label class="f-label">🔒 Password</label>
+      <input class="f-ctrl" id="a-pw" type="password" placeholder="Enter password" value="admin123" onkeydown="if(event.key==='Enter')doAdminLogin()">
+    </div>
+    <button class="btn-pr w-100 mt-2" id="login-btn-a" onclick="doAdminLogin()">Login to Admin →</button>
   </div>
 </div>
 
@@ -440,21 +448,43 @@ document.addEventListener('click',e=>{if(e.target.classList.contains('overlay'))
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 async function doAdminLogin(){
-  const btn=document.getElementById('login-btn-a');
-  const u=document.getElementById('a-user').value.trim();
-  const p=document.getElementById('a-pw').value;
-  if(!u||!p){toast('Enter credentials','warn');return;}
-  btn.disabled=true;btn.textContent='Logging in...';
-  try{
-    const d=await api('admin/login','POST',{username:u,password:p});
-    A.token=d.token;localStorage.setItem('admin_token',d.token);
-    document.getElementById('login-screen').style.display='none';
-    const panel=document.getElementById('admin-panel');
-    panel.style.display='flex';
-    loadDashboard();loadCats();
-    toast('Welcome, Admin! 👋','ok');
-  }catch(e){toast(e.message||'Login failed','err');}
-  btn.disabled=false;btn.textContent='Login to Admin →';
+  const btn = document.getElementById('login-btn-a');
+  const errEl = document.getElementById('login-err');
+  const u = (document.getElementById('a-user').value || '').trim();
+  const p = (document.getElementById('a-pw').value || '').trim();
+
+  // Hide previous error
+  errEl.style.display = 'none';
+
+  if(!u || !p){
+    errEl.textContent = '⚠️ Please enter both username and password';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Logging in...';
+
+  try {
+    const d = await api('admin/login', 'POST', { username: u, password: p });
+    if(!d || !d.token){
+      throw new Error('No token received from server');
+    }
+    A.token = d.token;
+    localStorage.setItem('admin_token', d.token);
+    // Hide login, show panel
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display  = 'flex';
+    toast('Welcome, Admin! 👋', 'ok');
+    loadDashboard();
+    loadCats();
+  } catch(e) {
+    const msg = (e && e.message) ? e.message : 'Login failed. Check credentials.';
+    errEl.textContent = '❌ ' + msg;
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Login to Admin →';
+  }
 }
 
 function adminLogout(){A.token=null;localStorage.removeItem('admin_token');location.reload();}
