@@ -105,29 +105,8 @@ textarea.f-ctrl{resize:vertical}
 <body>
 <div id="toasts"></div>
 
-<!-- LOGIN SCREEN -->
-<div id="login-screen" class="login-wrap">
-  <div class="login-box">
-    <div style="text-align:center;margin-bottom:28px">
-      <div style="font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:900;background:linear-gradient(135deg,var(--pl),var(--ac));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">⚡ DR. DEV</div>
-      <div style="color:var(--tm);font-size:.85rem;margin-top:5px">Admin Control Panel</div>
-    </div>
-    <!-- Inline error box — always visible when error occurs -->
-    <div id="login-err" style="display:none;background:rgba(239,68,68,.15);border:1px solid var(--err);border-radius:10px;padding:11px 14px;color:var(--err);font-size:.85rem;margin-bottom:14px;text-align:center"></div>
-    <div class="f-group">
-      <label class="f-label">👤 Username</label>
-      <input class="f-ctrl" id="a-user" placeholder="admin" value="admin" onkeydown="if(event.key==='Enter')doAdminLogin()">
-    </div>
-    <div class="f-group">
-      <label class="f-label">🔒 Password</label>
-      <input class="f-ctrl" id="a-pw" type="password" placeholder="Enter password" value="admin123" onkeydown="if(event.key==='Enter')doAdminLogin()">
-    </div>
-    <button class="btn-pr w-100 mt-2" id="login-btn-a" onclick="doAdminLogin()">Login to Admin →</button>
-  </div>
-</div>
-
-<!-- ADMIN PANEL -->
-<div id="admin-panel" style="display:none;flex-direction:row;min-height:100vh">
+<!-- ADMIN PANEL — shown directly, no login needed -->
+<div id="admin-panel" style="display:flex;flex-direction:row;min-height:100vh">
 
   <!-- SIDEBAR -->
   <div class="sidebar">
@@ -148,7 +127,6 @@ textarea.f-ctrl{resize:vertical}
       <a class="nav-item" onclick="showSection('logs')" data-sec="logs"><i class="fas fa-list-alt"></i><span>Visitor Logs</span></a>
       <a class="nav-item" onclick="showSection('settings')" data-sec="settings"><i class="fas fa-cog"></i><span>Settings</span></a>
     </nav>
-    <a class="nav-item" style="border-top:1px solid var(--bd)" onclick="adminLogout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
   </div>
 
   <!-- CONTENT -->
@@ -419,15 +397,15 @@ textarea.f-ctrl{resize:vertical}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 // ─── State ────────────────────────────────────────────────────────────────────
-const A={token:localStorage.getItem('admin_token'),cats:[],users:[],revChart:null};
+const A={cats:[],users:[],revChart:null};
 
 // ─── API ──────────────────────────────────────────────────────────────────────
 async function api(path,method='GET',body=null){
-  const opts={method,headers:{'Content-Type':'application/json',...(A.token?{Authorization:`Bearer ${A.token}`}:{})}};
-  if(body)opts.body=JSON.stringify(body);
+  const opts={method,headers:{'Content-Type':'application/json','X-Admin':'1'}};
+  if(body) opts.body=JSON.stringify(body);
   const r=await fetch('/api/'+path,opts);
   const d=await r.json().catch(()=>({}));
-  if(!r.ok)throw new Error(d.error||'Error');
+  if(!r.ok) throw new Error(d.error||'Request failed ('+r.status+')');
   return d;
 }
 
@@ -445,49 +423,6 @@ function toast(msg,type='info'){
 function openModal(id){document.getElementById(id).classList.remove('d-none');document.body.style.overflow='hidden';}
 function closeModal(id){document.getElementById(id).classList.add('d-none');document.body.style.overflow='';}
 document.addEventListener('click',e=>{if(e.target.classList.contains('overlay'))closeModal(e.target.id);});
-
-// ─── Auth ─────────────────────────────────────────────────────────────────────
-async function doAdminLogin(){
-  const btn = document.getElementById('login-btn-a');
-  const errEl = document.getElementById('login-err');
-  const u = (document.getElementById('a-user').value || '').trim();
-  const p = (document.getElementById('a-pw').value || '').trim();
-
-  // Hide previous error
-  errEl.style.display = 'none';
-
-  if(!u || !p){
-    errEl.textContent = '⚠️ Please enter both username and password';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = '⏳ Logging in...';
-
-  try {
-    const d = await api('admin/login', 'POST', { username: u, password: p });
-    if(!d || !d.token){
-      throw new Error('No token received from server');
-    }
-    A.token = d.token;
-    localStorage.setItem('admin_token', d.token);
-    // Hide login, show panel
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('admin-panel').style.display  = 'flex';
-    toast('Welcome, Admin! 👋', 'ok');
-    loadDashboard();
-    loadCats();
-  } catch(e) {
-    const msg = (e && e.message) ? e.message : 'Login failed. Check credentials.';
-    errEl.textContent = '❌ ' + msg;
-    errEl.style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = 'Login to Admin →';
-  }
-}
-
-function adminLogout(){A.token=null;localStorage.removeItem('admin_token');location.reload();}
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
 function showSection(name){
@@ -988,16 +923,8 @@ function filterTable(tblId,q){
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
-(function(){
-  if(A.token){
-    // Try auto-login with saved token
-    api('admin/stats').then(()=>{
-      document.getElementById('login-screen').style.display='none';
-      document.getElementById('admin-panel').style.display='flex';
-      loadDashboard();loadCats();
-    }).catch(()=>{localStorage.removeItem('admin_token');A.token=null;});
-  }
-})();
+loadDashboard();
+loadCats();
 </script>
 </body>
 </html>
