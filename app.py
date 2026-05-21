@@ -627,24 +627,10 @@ def notifications():
     return jsonify(notifications=ns[:10])
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  ADMIN — AUTH
-# ══════════════════════════════════════════════════════════════════════════════
-
-@app.route("/api/admin/login", methods=["POST"])
-@limiter.limit("10/hour")
-def admin_login():
-    d = request.get_json(silent=True) or {}
-    if d.get("username")==ADMIN_USER and d.get("password")==ADMIN_PASS:
-        return jsonify(success=True, token=make_token("admin", is_admin=True))
-    time.sleep(1)
-    return jsonify(error="Invalid admin credentials"), 401
-
-# ══════════════════════════════════════════════════════════════════════════════
 #  ADMIN — STATS
 # ══════════════════════════════════════════════════════════════════════════════
 
 @app.route("/api/admin/stats")
-@require_admin
 def admin_stats():
     users    = fb_list("users")
     orders   = fb_list("orders")
@@ -698,7 +684,6 @@ def admin_stats():
 # ══════════════════════════════════════════════════════════════════════════════
 
 @app.route("/api/admin/users")
-@require_admin
 def admin_users():
     us = fb_list("users")
     for u in us: u.pop("password_hash",None)
@@ -706,7 +691,6 @@ def admin_users():
     return jsonify(users=us)
 
 @app.route("/api/admin/users/<uid_>", methods=["PATCH","DELETE"])
-@require_admin
 def admin_user(uid_):
     if request.method=="DELETE":
         fb(f"users/{uid_}","DELETE")
@@ -722,7 +706,6 @@ def admin_user(uid_):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @app.route("/api/admin/categories", methods=["GET","POST"])
-@require_admin
 def admin_cats():
     if request.method=="GET":
         return jsonify(categories=fb_list("categories"))
@@ -737,7 +720,6 @@ def admin_cats():
     return jsonify(success=True, id=cid)
 
 @app.route("/api/admin/categories/<cid>", methods=["PATCH","DELETE"])
-@require_admin
 def admin_cat(cid):
     if request.method=="DELETE":
         fb(f"categories/{cid}","DELETE"); return jsonify(success=True)
@@ -752,7 +734,6 @@ def admin_cat(cid):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @app.route("/api/admin/products", methods=["GET","POST"])
-@require_admin
 def admin_prods():
     if request.method=="GET":
         ps = fb_list("products")
@@ -776,7 +757,6 @@ def admin_prods():
     return jsonify(success=True, id=pid)
 
 @app.route("/api/admin/products/<pid>", methods=["PATCH","DELETE"])
-@require_admin
 def admin_prod(pid):
     if request.method=="DELETE":
         fb(f"products/{pid}","DELETE"); return jsonify(success=True)
@@ -793,7 +773,6 @@ def admin_prod(pid):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @app.route("/api/admin/orders")
-@require_admin
 def admin_orders():
     s = request.args.get("start",""); e = request.args.get("end","")
     status = request.args.get("status","")
@@ -805,7 +784,6 @@ def admin_orders():
     return jsonify(orders=os_)
 
 @app.route("/api/admin/orders/<oid>", methods=["PATCH"])
-@require_admin
 def admin_order(oid):
     d = request.get_json(silent=True) or {}
     order = fb(f"orders/{oid}")
@@ -827,14 +805,12 @@ def admin_order(oid):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @app.route("/api/admin/deposits")
-@require_admin
 def admin_deposits():
     ds = fb_list("deposits")
     ds.sort(key=lambda x:x.get("created_at",""), reverse=True)
     return jsonify(deposits=ds)
 
 @app.route("/api/admin/deposits/<did>", methods=["PATCH"])
-@require_admin
 def admin_deposit(did):
     d   = request.get_json(silent=True) or {}
     dep = fb(f"deposits/{did}")
@@ -847,14 +823,12 @@ def admin_deposit(did):
     return jsonify(success=True)
 
 @app.route("/api/admin/withdrawals")
-@require_admin
 def admin_wds():
     ws = fb_list("withdrawals")
     ws.sort(key=lambda x:x.get("created_at",""), reverse=True)
     return jsonify(withdrawals=ws)
 
 @app.route("/api/admin/withdrawals/<wid>", methods=["PATCH"])
-@require_admin
 def admin_wd(wid):
     d  = request.get_json(silent=True) or {}
     wd = fb(f"withdrawals/{wid}")
@@ -871,7 +845,6 @@ def admin_wd(wid):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @app.route("/api/admin/settings", methods=["GET","PATCH"])
-@require_admin
 def admin_settings():
     if request.method=="GET":
         return jsonify(settings=fb("settings") or {})
@@ -884,7 +857,6 @@ def admin_settings():
 # ══════════════════════════════════════════════════════════════════════════════
 
 @app.route("/api/admin/broadcast", methods=["POST"])
-@require_admin
 def broadcast():
     d = request.get_json(silent=True) or {}
     nid = uid()
@@ -901,14 +873,12 @@ def broadcast():
 # ══════════════════════════════════════════════════════════════════════════════
 
 @app.route("/api/admin/reviews")
-@require_admin
 def admin_reviews():
     rs = fb_list("reviews")
     rs.sort(key=lambda x:x.get("created_at",""), reverse=True)
     return jsonify(reviews=rs)
 
 @app.route("/api/admin/reviews/<rid>", methods=["DELETE"])
-@require_admin
 def admin_del_review(rid):
     fb(f"reviews/{rid}","DELETE")
     return jsonify(success=True)
@@ -918,7 +888,6 @@ def admin_del_review(rid):
 # ══════════════════════════════════════════════════════════════════════════════
 
 @app.route("/api/admin/logs")
-@require_admin
 def admin_logs():
     logs = fb_list("visitor_logs")
     logs.sort(key=lambda x:x.get("timestamp",""), reverse=True)
